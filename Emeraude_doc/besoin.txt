@@ -1,0 +1,15 @@
+Commençons par la base
+
+Mon client est ambitieux, il veut une app web, ou il propose ses services de pâtisserie, mais à l'avenir compte offrir des bouché salé, vendre également des livrets personnalisés ( et se demande si cela serait possible et correct de le faire sur la même plateforme)
+
+Elle veut une belle interface ( une accueil attirante avec un appel à l'action )
+
+Un espace produits, avec ses produits, avec des catégories et des filtres, la possibilité de voir le détail de ses produits
+
+Lors de la commande, le client peut personnaliser le ou les produits ( couleur, ingrédients, et aussi donner des commentaires ) et une personnalisation peut entraîner une augmentation du prix
+
+Il faudrait un espace utilisateur pour les clients, pour leurs commandes,
+
+Un espace admin pour gère tous les produits, les prix, les catégories, les les personnalisation possible et leur prix
+
+l'entreprise s'appelle les delices d'emeraudes (le thème de couleur devra donc aller avec les vers émeraude)

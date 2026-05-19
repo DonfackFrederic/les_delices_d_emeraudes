@@ -1,0 +1,8 @@
+{
+  "name": "les-delices-demeraude",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
