@@ -20,7 +20,10 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@shared/types": ["../../packages/types/shared-types/src/index"],
+      "@shared/types/*": ["../../packages/types/shared-types/src/*"]
+    }
   },
-  "extends": "../../tsconfig.base.json"
 }
