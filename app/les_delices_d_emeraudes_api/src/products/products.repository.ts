@@ -10,7 +10,7 @@ export class ProductsRepository {
   async findAll(query: ProductsQueryParams = {}): Promise<{ data: any[] | null; count: number | null; error: PostgrestError | null }> {
     const { category, featured, search, page = 1, limit = 12 } = query;
     const offset = (page - 1) * limit;
-    const select = '*';
+    const select = '*,category:categories(*)';
 
     let qb: any = this.supabaseService
       .getClient()
@@ -19,7 +19,8 @@ export class ProductsRepository {
       .range(offset, offset + limit - 1);
 
     if (category) {
-      qb = qb.eq('category_id', category);
+      const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(category);
+      qb = isUuid ? qb.eq('category_id', category) : qb.eq('categories.slug', category);
     }
 
     if (featured !== undefined && featured !== null) {
