@@ -15,7 +15,7 @@ export class ProductsController {
   @Get()
   findAll(
     @Query('category') category?: string,
-    @Query('featured') featured?: string,
+    @Query('featured') featured?: boolean,
     @Query('search') search?: string,
     @Query('page') page = '1',
     @Query('limit') limit = '12',

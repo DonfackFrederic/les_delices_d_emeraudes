@@ -2,7 +2,7 @@ import { describe, expect, it, jest, beforeEach } from '@jest/globals';
 import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProductsService } from './products.service';
-import { SupabaseService } from 'src/supabase/supabase.service';
+import { ProductsRepository } from './products.repository';
 
 const sampleProducts = [
   {
@@ -37,17 +37,18 @@ const sampleProduct = {
 
 describe('ProductsService', () => {
   let service: ProductsService;
-  let mockSupabaseService: any;
+  let mockProductsRepository: jest.Mocked<ProductsRepository>;
 
   beforeEach(async () => {
-    mockSupabaseService = {
-      getClient: jest.fn(),
-    };
+    mockProductsRepository = {
+      findAll: jest.fn(),
+      findBySlug: jest.fn(),
+    } as unknown as jest.Mocked<ProductsRepository>;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ProductsService,
-        { provide: SupabaseService, useValue: mockSupabaseService },
+        { provide: ProductsRepository, useValue: mockProductsRepository },
       ],
     }).compile();
 
@@ -60,16 +61,7 @@ describe('ProductsService', () => {
 
   describe('findAll', () => {
     it('returns paginated products with pagination metadata', async () => {
-      const mockQuery = {
-        select: jest.fn().mockReturnThis(),
-        range: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        or: jest.fn().mockReturnThis(),
-        then: (resolve: any) => resolve({ data: sampleProducts, error: null, count: 100 }),
-      };
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn().mockReturnValue(mockQuery),
-      });
+      mockProductsRepository.findAll.mockResolvedValue({ data: sampleProducts, error: null, count: 100 });
 
       const result = await service.findAll({ page: 1, limit: 12 });
 
@@ -78,33 +70,25 @@ describe('ProductsService', () => {
     });
 
     it('filters by featured=true', async () => {
-      const mockQuery = {
-        select: jest.fn().mockReturnThis(),
-        range: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        or: jest.fn().mockReturnThis(),
-        then: (resolve: any) => resolve({ data: [sampleProducts[0]], error: null, count: 1 }),
-      };
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn().mockReturnValue(mockQuery),
-      });
+      mockProductsRepository.findAll.mockResolvedValue({ data: [sampleProducts[0]], error: null, count: 1 });
 
       const result = await service.findAll({ featured: true });
 
-      expect(mockQuery.eq).toHaveBeenCalledWith('featured', true);
       expect(result.data).toEqual([sampleProducts[0]]);
     });
 
     it('throws InternalServerErrorException on Supabase error', async () => {
-      const mockQuery = {
-        select: jest.fn().mockReturnThis(),
-        range: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        or: jest.fn().mockReturnThis(),
-        then: (resolve: any) => resolve({ data: null, error: { message: 'Query failed' }, count: null }),
-      };
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn().mockReturnValue(mockQuery),
+      mockProductsRepository.findAll.mockResolvedValue({
+        data: null,
+        error: {
+          message: 'Query failed',
+          details: null,
+          hint: null,
+          code: '',
+          name: '',
+          toJSON: () => ({}),
+        } as any,
+        count: null,
       });
 
       await expect(service.findAll()).rejects.toThrow(InternalServerErrorException);
@@ -113,62 +97,38 @@ describe('ProductsService', () => {
 
   describe('findBySlug', () => {
     it('returns product with eager-loaded relations', async () => {
-      const mockQuery = {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        maybeSingle: jest.fn().mockReturnThis(),
-        then: (resolve: any) => resolve({ data: sampleProduct, error: null }),
-      };
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn().mockReturnValue(mockQuery),
-      });
+      mockProductsRepository.findBySlug.mockResolvedValue({ data: sampleProduct, error: null });
 
       const result = await service.findBySlug('croissant', { include: 'options' });
 
-      expect(mockQuery.select).toHaveBeenCalledWith('*,options(*)');
       expect(result).toEqual(sampleProduct);
     });
 
     it('returns product without include when no relations requested', async () => {
-      const mockQuery = {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        maybeSingle: jest.fn().mockReturnThis(),
-        then: (resolve: any) => resolve({ data: sampleProducts[0], error: null }),
-      };
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn().mockReturnValue(mockQuery),
-      });
+      mockProductsRepository.findBySlug.mockResolvedValue({ data: sampleProducts[0], error: null });
 
       const result = await service.findBySlug('croissant');
 
-      expect(mockQuery.select).toHaveBeenCalledWith('*');
       expect(result).toEqual(sampleProducts[0]);
     });
 
     it('throws NotFoundException when product not found', async () => {
-      const mockQuery = {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        maybeSingle: jest.fn().mockReturnThis(),
-        then: (resolve: any) => resolve({ data: null, error: null }),
-      };
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn().mockReturnValue(mockQuery),
-      });
+      mockProductsRepository.findBySlug.mockResolvedValue({ data: null, error: null });
 
       await expect(service.findBySlug('nonexistent')).rejects.toThrow(NotFoundException);
     });
 
     it('throws InternalServerErrorException on Supabase error', async () => {
-      const mockQuery = {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        maybeSingle: jest.fn().mockReturnThis(),
-        then: (resolve: any) => resolve({ data: null, error: { message: 'Query error' } }),
-      };
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn().mockReturnValue(mockQuery),
+      mockProductsRepository.findBySlug.mockResolvedValue({
+        data: null,
+        error: {
+          message: 'Query error',
+          details: null,
+          hint: null,
+          code: '',
+          name: '',
+          toJSON: () => ({}),
+        } as any,
       });
 
       await expect(service.findBySlug('croissant')).rejects.toThrow(InternalServerErrorException);

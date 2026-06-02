@@ -1,0 +1,39 @@
+<section class="categories" aria-labelledby="categories-title">
+  <p class="section-eyebrow">Explorer</p>
+  <h2 class="section-title" id="categories-title">Nos catégories</h2>
+  <p class="section-sub">Parcourez notre sélection de créations artisanales.</p>
+
+  @if (loading()) {
+    <div class="categories__grid" aria-busy="true">
+      @for (_ of [1, 2, 3, 4, 5, 6]; track $index) {
+        <div class="categories__skeleton"></div>
+      }
+    </div>
+  } @else {
+    <div class="categories__grid">
+      @for (cat of categories(); track trackByCategory($index, cat)) {
+        <button
+          class="categories__card"
+          type="button"
+          (click)="onCategoryClick(cat.slug)"
+          [attr.aria-label]="'Voir les produits ' + cat.name"
+        >
+          <div class="categories__icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" [innerHTML]="getIcon(cat.slug)"></svg>
+          </div>
+
+          <div class="categories__info">
+            <p class="categories__name">{{ cat.name }}</p>
+            @if (cat.description) {
+              <p class="categories__desc">{{ cat.description }}</p>
+            }
+          </div>
+
+          <svg class="categories__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      }
+    </div>
+  }
+</section>

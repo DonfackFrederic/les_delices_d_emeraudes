@@ -1,18 +1,12 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ProductsQueryParams } from '@shared/types';
 import type { PostgrestError } from '@supabase/supabase-js';
-import { SupabaseService } from 'src/supabase/supabase.service';
-
-interface ListQuery {
-  category?: string;
-  featured?: string | boolean;
-  search?: string;
-  page?: number;
-  limit?: number;
-}
+import { ProductsRepository } from './products.repository';
+import { toCamel } from 'src/utils/data-transformer.util';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly supabaseService: SupabaseService) {}
+  constructor(private readonly productsRepository: ProductsRepository) {}
 
   private handleSupabaseError(error: PostgrestError | null): void {
     if (error) {
@@ -24,46 +18,19 @@ export class ProductsService {
   //   return 'This action adds a new product';
   // }
 
-  async findAll(query: ListQuery = {}) {
-    const { category, featured, search, page = 1, limit = 12 } = query;
-    const offset = (page - 1) * limit;
+  async findAll(query: ProductsQueryParams = {}) {
+    let { data, error, count } = await this.productsRepository.findAll(query);
+    data = toCamel(data)
+    const { page = 1, limit = 12 } = query;
 
-    // Build select - here keep simple; consumer can extend to include relations
-    const select = '*';
-
-    let qb: any = this.supabaseService.getClient().from('products').select(select, { count: 'exact' }).range(offset, offset + limit - 1);
-
-    if (category) {
-      qb = qb.eq('category_id', category);
-    }
-
-    if (featured !== undefined && featured !== null && featured !== '') {
-      const isFeatured = featured === true || String(featured).toLowerCase() === 'true' || String(featured) === '1';
-      qb = qb.eq('featured', isFeatured);
-    }
-
-    if (search) {
-      const term = `%${search}%`;
-      qb = qb.or(`name.ilike.${term},description.ilike.${term}`);
-    }
-
-    const { data, error, count } = await qb;
     this.handleSupabaseError(error as PostgrestError | null);
 
     return { data: data ?? [], meta: { total: count ?? null, page, limit } };
   }
 
   async findBySlug(slug: string, opts?: { include?: string }) {
-    const include = opts?.include ? opts.include.split(',').map((s) => s.trim()) : [];
-
-    // Build select string with optional relations
-    let select = '*';
-    if (include.length > 0) {
-      const relations = include.map((r) => `${r}(*)`).join(',');
-      select = `*,${relations}`;
-    }
-
-    const { data, error } = await this.supabaseService.getClient().from('products').select(select).eq('slug', slug).maybeSingle();
+    let { data, error } = await this.productsRepository.findBySlug(slug, opts?.include);
+    data = toCamel(data)
     this.handleSupabaseError(error as PostgrestError | null);
 
     if (!data) {

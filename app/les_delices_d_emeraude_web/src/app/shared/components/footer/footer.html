@@ -1,0 +1,42 @@
+<footer class="footer">
+  <div class="footer-top">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3 class="footer-title">Suivez Nous</h3>
+          <div class="social-links">
+            @for (social of socialLinks; track social.name) {
+              <a [href]="social.url" class="social-link" [attr.aria-label]="social.name">
+                <span class="social-icon">{{ social.icon }}</span>
+              </a>
+            }
+          </div>
+        </div>
+
+        <div class="footer-section logo-section">
+          <img src="logo.png" alt="Delices_d_emeraude Logo" class="footer-logo">
+        </div>
+
+        <div class="footer-section">
+          <h3 class="footer-title">Notre Infolettre</h3>
+          <form class="newsletter-form" (ngSubmit)="subscribe()">
+            <input
+              type="email"
+              [(ngModel)]="email"
+              name="email"
+              placeholder="Votre email"
+              class="newsletter-input"
+              required>
+            <button type="submit" class="newsletter-btn">S'abonner</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container">
+      <p class="copyright">© {{ currentYear }} Les Délices d'Émeraude. Tous droits réservés.</p>
+    </div>
+  </div>
+</footer>
