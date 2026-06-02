@@ -2,7 +2,7 @@ import { describe, expect, it, jest, beforeEach } from '@jest/globals';
 import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CategoriesService } from './categories.service';
-import { SupabaseService } from 'src/supabase/supabase.service';
+import { CategoriesRepository } from './categories.repository';
 import type { Category } from '@shared/types';
 
 const sampleCategories: Category[] = [
@@ -23,34 +23,22 @@ const sampleCategory: Category = {
   sort_order: 2,
 } as unknown as Category;
 
-const createQueryBuilder = (result: any) => {
-  const builder: any = {
-    from: jest.fn().mockReturnThis(),
-    select: jest.fn().mockReturnThis(),
-    eq: jest.fn().mockReturnThis(),
-    order: jest.fn().mockReturnThis(),
-    maybeSingle: jest.fn().mockReturnThis(),
-    then: (resolve: any) => resolve(result),
-    catch: jest.fn(),
-  };
-  return builder;
-};
-
 describe('CategoriesService', () => {
   let service: CategoriesService;
-  let mockSupabaseService: { getClient: any };
+  let mockCategoriesRepository: any;
 
   beforeEach(async () => {
-    mockSupabaseService = {
-      getClient: jest.fn(),
+    mockCategoriesRepository = {
+      findAll: jest.fn(),
+      findBySlug: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CategoriesService,
         {
-          provide: SupabaseService,
-          useValue: mockSupabaseService,
+          provide: CategoriesRepository,
+          useValue: mockCategoriesRepository,
         },
       ],
     }).compile();
@@ -64,20 +52,15 @@ describe('CategoriesService', () => {
 
   describe('findAll', () => {
     it('returns active categories ordered by sort_order', async () => {
-      const queryBuilder = createQueryBuilder({ data: sampleCategories, error: null });
-      mockSupabaseService.getClient.mockReturnValue(queryBuilder);
+      mockCategoriesRepository.findAll.mockResolvedValue({ data: sampleCategories, error: null });
 
       const result = await service.findAll();
 
       expect(result).toEqual(sampleCategories);
-      expect(queryBuilder.from).toHaveBeenCalledWith('categories');
-      expect(queryBuilder.eq).toHaveBeenCalledWith('is_active', true);
-      expect(queryBuilder.order).toHaveBeenCalledWith('sort_order', { ascending: true });
     });
 
     it('throws InternalServerErrorException when Supabase returns an error', async () => {
-      const queryBuilder = createQueryBuilder({ data: null, error: { message: 'Supabase unavailable' } });
-      mockSupabaseService.getClient.mockReturnValue(queryBuilder);
+      mockCategoriesRepository.findAll.mockResolvedValue({ data: null, error: { message: 'Supabase unavailable' } });
 
       await expect(service.findAll()).rejects.toThrow(InternalServerErrorException);
     });
@@ -85,35 +68,28 @@ describe('CategoriesService', () => {
 
   describe('findBySlug', () => {
     it('returns a category when it exists and is active', async () => {
-      const queryBuilder = createQueryBuilder({ data: sampleCategory, error: null });
-      mockSupabaseService.getClient.mockReturnValue(queryBuilder);
+      mockCategoriesRepository.findBySlug.mockResolvedValue({ data: sampleCategory, error: null });
 
       const result = await service.findBySlug('chocolats');
 
       expect(result).toEqual(sampleCategory);
-      expect(queryBuilder.from).toHaveBeenCalledWith('categories');
-      expect(queryBuilder.eq).toHaveBeenCalledWith('slug', 'chocolats');
-      expect(queryBuilder.maybeSingle).toHaveBeenCalled();
     });
 
     it('throws NotFoundException when category is missing', async () => {
-      const queryBuilder = createQueryBuilder({ data: null, error: null });
-      mockSupabaseService.getClient.mockReturnValue(queryBuilder);
+      mockCategoriesRepository.findBySlug.mockResolvedValue({ data: null, error: null });
 
       await expect(service.findBySlug('unknown')).rejects.toThrow(NotFoundException);
     });
 
     it('throws NotFoundException when category is not active', async () => {
       const inactiveCategory = { ...sampleCategory, is_active: false } as Category;
-      const queryBuilder = createQueryBuilder({ data: inactiveCategory, error: null });
-      mockSupabaseService.getClient.mockReturnValue(queryBuilder);
+      mockCategoriesRepository.findBySlug.mockResolvedValue({ data: inactiveCategory, error: null });
 
       await expect(service.findBySlug('chocolats')).rejects.toThrow(NotFoundException);
     });
 
     it('throws InternalServerErrorException when Supabase returns an error', async () => {
-      const queryBuilder = createQueryBuilder({ data: null, error: { message: 'Query failed' } });
-      mockSupabaseService.getClient.mockReturnValue(queryBuilder);
+      mockCategoriesRepository.findBySlug.mockResolvedValue({ data: null, error: { message: 'Query failed' } });
 
       await expect(service.findBySlug('chocolats')).rejects.toThrow(InternalServerErrorException);
     });

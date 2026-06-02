@@ -1,11 +1,12 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import type { PostgrestError } from '@supabase/supabase-js';
-import { SupabaseService } from 'src/supabase/supabase.service';
+import { CategoriesRepository } from './categories.repository';
 import type { Category } from '@shared/types';
+import { toCamel } from 'src/utils/data-transformer.util';
 
 @Injectable()
 export class CategoriesService {
-  constructor(private readonly supabaseService: SupabaseService) {}
+  constructor(private readonly categoriesRepository: CategoriesRepository) {}
 
   private handleSupabaseError(error: PostgrestError | null): void {
     if (error) {
@@ -14,26 +15,20 @@ export class CategoriesService {
   }
 
   async findAll(): Promise<Category[]> {
-    const { data, error } = await this.supabaseService.getClient()
-      .from('categories')
-      .select('*')
-      .eq('is_active', true)
-      .order('sort_order', { ascending: true });
+    let { data, error } = await this.categoriesRepository.findAll();
+    data = toCamel(data)
 
     this.handleSupabaseError(error);
     return data ?? [];
   }
 
   async findBySlug(slug: string): Promise<Category> {
-    const { data, error } = await this.supabaseService.getClient()
-      .from('categories')
-      .select('*')
-      .eq('slug', slug)
-      .maybeSingle();
+    let { data, error } = await this.categoriesRepository.findBySlug(slug);
+    data = toCamel(data)
 
     this.handleSupabaseError(error);
 
-    if (!data || data.is_active !== true) {
+    if (!data || data.isActive !== true) {
       throw new NotFoundException('Category not found');
     }
 

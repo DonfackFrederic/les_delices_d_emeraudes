@@ -1,0 +1,45 @@
+<section class="featured" aria-labelledby="featured-title">
+  <div class="featured__header">
+    <div>
+      <p class="section-eyebrow">Nos créations</p>
+      <h2 class="section-title" id="featured-title">Produits en vedette</h2>
+      <p class="section-sub">Découvrez nos pâtisseries les plus appréciées, réalisées avec soin.</p>
+    </div>
+    <a routerLink="/products" class="featured__link-all">
+      Tout voir
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+
+  @if (loading()) {
+    <div class="featured__grid" aria-busy="true" aria-label="Chargement des produits">
+      @for (_ of [1, 2, 3, 4, 5, 6]; track $index) {
+        <div class="featured__skeleton"></div>
+      }
+    </div>
+  }
+
+  @if (error()) {
+    <div class="featured__error" role="alert">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M10 6v5M10 13.5h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      {{ error() }}
+    </div>
+  }
+
+  @if (!loading() && !error()) {
+    <div class="featured__grid">
+      @for (product of products(); track trackByProduct($index, product)) {
+        <app-product-card
+          [product]="product"
+          [showBadge]="true"
+          (addToCart)="onAddToCart($event)"
+        />
+      }
+    </div>
+  }
+</section>

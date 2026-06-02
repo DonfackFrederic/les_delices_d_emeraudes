@@ -1,1 +1,123 @@
-/* You can add global styles to this file, and also import other style files */
+@use "sass:color";
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-color: #004D40;
+  --secondary-color: #00A86B;
+  --text-color: #333;
+  --light-text: #666;
+  --background-color: white;
+  --gray-color: #f0f0f0;
+  --dark-color: #2c2c2c;
+  --primary-rgb: 0, 77, 64;
+  --secondary-rgb: 0, 168, 107;
+}
+
+$primary-color: #004D40;
+$secondary-color: #00A86B;
+$text-color: #333;
+$light-text: #666;
+$background-color: white;
+$gray-color: #f0f0f0;
+$dark-color: #2c2c2c;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
+  line-height: 1.2;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button {
+  font-family: 'Poppins', sans-serif;
+}
+
+main {
+  overflow-x: hidden;
+}
+
+// Mixins
+@mixin button($bg: $primary-color, $color: white) {
+  background: $bg;
+  color: $color;
+  border: none;
+  padding: 0.875rem 2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: color.adjust($bg, $lightness: -10%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba($bg, 0.3);
+  }
+}
+
+@mixin container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+@mixin section-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+@mixin fade-in-up {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Reusable Classes
+.container {
+  @include container;
+}
+
+.section-header {
+  @include section-header;
+}
+
+.btn-primary {
+  @include button($primary-color, white);
+}
+
+.btn-secondary {
+  @include button($secondary-color, white);
+}
