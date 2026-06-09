@@ -1,0 +1,37 @@
+@if (loading()) {
+  <div class="products__grid" aria-busy="true" aria-label="Chargement des produits">
+    @for (_ of skeletons.slice(0, skeletonCount()); track $index) {
+      <div class="products__skeleton"></div>
+    }
+  </div>
+}
+
+@else if (error()) {
+  <div class="products__error" role="alert">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M10 6v5M10 13.5h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    {{ error() }}
+  </div>
+}
+
+@else if (products().length === 0) {
+ <div class="grid-empty">
+   <i class="ti ti-mood-empty grid-empty__icon" aria-hidden="true"></i>
+   <p class="grid-empty__title">Aucun produit trouvé</p>
+   <p class="grid-empty__msg">Essayez une autre catégorie ou modifiez votre recherche.</p>
+ </div>
+}
+
+@else () {
+  <div class="products__grid">
+    @for (product of products(); track trackById($index, product)) {
+      <app-product-card
+        [product]="product"
+        [showBadge]="true"
+        (addToCart)="onAddToCart(product)"
+      />
+    }
+  </div>
+}

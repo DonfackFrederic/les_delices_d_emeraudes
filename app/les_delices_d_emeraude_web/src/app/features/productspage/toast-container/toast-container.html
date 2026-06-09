@@ -1,0 +1,18 @@
+<div class="toast-host" role="region" aria-label="Notifications" aria-live="polite">
+  @for (t of svc.toasts(); track trackById($index, t)) {
+    <div class="toast toast--{{ t.type }}"
+         (mouseenter)="onEnter(t)" (mouseleave)="onLeave(t)"
+         role="alert">
+      <i class="ti {{ icons[t.type] }} toast__icon" aria-hidden="true"></i>
+      <div class="toast__body">
+        <p class="toast__title">{{ t.title }}</p>
+        @if (t.message) { <p class="toast__msg">{{ t.message }}</p> }
+      </div>
+      <button class="toast__close" type="button"
+              (click)="dismiss(t.id)" aria-label="Fermer">
+        <i class="ti ti-x" aria-hidden="true"></i>
+      </button>
+      <div class="toast__bar" [style.animation-duration]="t.duration + 'ms'"></div>
+    </div>
+  }
+</div>

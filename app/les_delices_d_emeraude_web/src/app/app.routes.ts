@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
 import { Homepage } from './features/homepage/homepage';
+import { Productspage } from './features/productspage/productspage';
 
 export const routes: Routes = [
   { path: '', component: Homepage },
-  // { path: 'products', component: ProductsPageComponent },
+  { path: 'products', component: Productspage },
   // { path: 'products/:slug', component: ProductDetailPageComponent },
   // { path: 'login', component: LoginPageComponent },
   // { path: 'register', component: RegisterPageComponent },
