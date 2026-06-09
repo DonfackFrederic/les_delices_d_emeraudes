@@ -66,7 +66,9 @@ describe('ProductsService', () => {
       const result = await service.findAll({ page: 1, limit: 12 });
 
       expect(result.data).toEqual(sampleProducts);
-      expect(result.meta).toEqual({ total: 100, page: 1, limit: 12 });
+      expect(result.total).toEqual(100);
+      expect(result.page).toEqual(1);
+      expect(result.limit).toEqual(12);
     });
 
     it('filters by featured=true', async () => {

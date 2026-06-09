@@ -10,7 +10,10 @@ export class ProductsRepository {
   async findAll(query: ProductsQueryParams = {}): Promise<{ data: any[] | null; count: number | null; error: PostgrestError | null }> {
     const { category, featured, search, page = 1, limit = 12 } = query;
     const offset = (page - 1) * limit;
-    const select = '*,category:categories(*)';
+    const isCategorySlug = category && !/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(category);
+    const select = isCategorySlug
+      ? '*,category:categories!inner(name,slug)'
+      : '*,category:categories(name,slug)'; // Sélectionne les champs du produit et les informations de la catégorie associée
 
     let qb: any = this.supabaseService
       .getClient()

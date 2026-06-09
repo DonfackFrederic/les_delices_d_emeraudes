@@ -25,7 +25,7 @@ export class ProductsService {
 
     this.handleSupabaseError(error as PostgrestError | null);
 
-    return { data: data ?? [], meta: { total: count ?? null, page, limit } };
+    return { data: data ?? [], total: count ?? null, page, limit };
   }
 
   async findBySlug(slug: string, opts?: { include?: string }) {
