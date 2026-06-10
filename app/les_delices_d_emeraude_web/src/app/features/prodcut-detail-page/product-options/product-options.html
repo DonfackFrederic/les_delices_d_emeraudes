@@ -1,0 +1,6 @@
+<div class="options">
+  @for (option of store.product()?.options ?? []; track option.id) {
+    <app-product-option-item [option]="option" />
+    <div class="options__divider" aria-hidden="true"></div>
+  }
+</div>

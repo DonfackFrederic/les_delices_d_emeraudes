@@ -1,0 +1,15 @@
+:host { display: block; }
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  &__divider {
+    height: 1px;
+    background: #f0f0f0;
+    margin: 16px 0;
+
+    &:last-child { display: none; }
+  }
+}
