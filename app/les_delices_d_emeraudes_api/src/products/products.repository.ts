@@ -1,55 +1,73 @@
 import { Injectable } from '@nestjs/common';
-import type { PostgrestError } from '@supabase/supabase-js';
-import { SupabaseService } from 'src/supabase/supabase.service';
-import type { ProductsQueryParams } from '@shared/types';
+import { SupabaseService } from '../supabase/supabase.service';
+import { PostgrestError } from '@supabase/supabase-js';
+import { Product, ProductsQueryParams } from '@shared/types';
+import { PRODUCT_DETAIL_SELECT, PRODUCT_LIST_SELECT } from 'src/utils/product-select.req.util';
 
 @Injectable()
 export class ProductsRepository {
   constructor(private readonly supabaseService: SupabaseService) {}
 
-  async findAll(query: ProductsQueryParams = {}): Promise<{ data: any[] | null; count: number | null; error: PostgrestError | null }> {
-    const { category, featured, search, page = 1, limit = 12 } = query;
-    const offset = (page - 1) * limit;
-    const select = '*,category:categories(*)';
-
-    let qb: any = this.supabaseService
+  async findBySlug(
+    slug: string,
+  ): Promise<{ data: Product | null; error: PostgrestError | null }> {
+    const { data, error } = await this.supabaseService
       .getClient()
       .from('products')
-      .select(select, { count: 'exact' })
-      .range(offset, offset + limit - 1);
+      .select(PRODUCT_DETAIL_SELECT)
+      .eq('slug', slug)
+      .eq('is_active', true)
+      .maybeSingle();
 
-    if (category) {
-      const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(category);
-      qb = isUuid ? qb.eq('category_id', category) : qb.eq('categories.slug', category);
+    if (error) return { data: null, error };
+
+    // Normaliser le tri des options et valeurs (sort_order ASC)
+    if (data?.options) {
+      data.options.sort((a: any, b: any) => a.sort_order - b.sort_order);
+      data.options.forEach((opt: any) => {
+        if (opt.values) {
+          opt.values.sort((a: any, b: any) => a.sort_order - b.sort_order);
+        }
+      });
     }
 
-    if (featured !== undefined && featured !== null) {
-      const isFeatured = featured === true || String(featured).toLowerCase() === 'true' || String(featured) === '1';
-      qb = qb.eq('is_featured', isFeatured);
-    }
-
-    if (search) {
-      const term = `%${search}%`;
-      qb = qb.or(`name.ilike.${term},description.ilike.${term}`);
-    }
-
-    return qb
+    return { data: data as unknown as Product, error: null };
   }
 
-  async findBySlug(slug: string, include?: string): Promise<{ data: any | null; error: PostgrestError | null }> {
-    const includeParts = include ? include.split(',').map((part) => part.trim()) : [];
-    let select = '*';
+  async findAll(filters: ProductsQueryParams): Promise<{
+    data: any[];
+    count: number;
+    error: PostgrestError | null;
+  }> {
+    const { page = 1, limit = 12, category, featured, search } = filters;
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+    const productListSelect = PRODUCT_LIST_SELECT(category ?? '');
 
-    if (includeParts.length > 0) {
-      const relations = includeParts.map((relation) => `${relation}(*)`).join(',');
-      select = `*,${relations}`;
-    }
-
-    return this.supabaseService
+    let query = this.supabaseService
       .getClient()
       .from('products')
-      .select(select)
-      .eq('slug', slug)
-      .maybeSingle();
+      .select(productListSelect, { count: 'exact' })
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true })
+      .range(from, to);
+
+    if (featured !== undefined) query = query.eq('is_featured', featured);
+    if (search) query = query.ilike('name', `%${search}%`);
+
+    if (category) {
+      // Filtrer via la relation : on récupère d'abord l'id de la catégorie
+      const { data: cat } = await this.supabaseService
+        .getClient()
+        .from('categories')
+        .select('id')
+        .eq('slug', category)
+        .single();
+
+      if (cat) query = query.eq('category_id', cat.id);
+    }
+
+    const { data, error, count } = await query;
+    return { data: data ?? [], count: count ?? 0, error };
   }
 }

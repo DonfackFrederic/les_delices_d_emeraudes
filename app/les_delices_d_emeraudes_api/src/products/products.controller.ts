@@ -32,8 +32,8 @@ export class ProductsController {
   }
 
   @Get(':slug')
-  findBySlug(@Param('slug') slug: string, @Query('include') include?: string) {
-    return this.productsService.findBySlug(slug, { include });
+  findBySlug(@Param('slug') slug: string) {
+    return this.productsService.findBySlug(slug);
   }
 
   // @Patch(':id')

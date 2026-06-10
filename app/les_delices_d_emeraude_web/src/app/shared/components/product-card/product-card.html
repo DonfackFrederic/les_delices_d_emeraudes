@@ -1,52 +1,63 @@
-<article class="product-card" [class.product-card--featured]="product().isFeatured && showBadge()">
-  <a [routerLink]="['/products', product().slug]" class="product-card__image-link" [attr.aria-label]="'Voir ' + product.name">
-    <div class="product-card__image">
-      @if (product().imageUrl) {
-        <img [src]="product().imageUrl" [alt]="product().name" loading="lazy" />
-      } @else {
-        <div class="product-card__placeholder" aria-hidden="true">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <path d="M24 8C15.2 8 8 15.2 8 24s7.2 16 16 16 16-7.2 16-16S32.8 8 24 8zm0 6c2.2 0 4 1.8 4 4s-1.8 4-4 4-4-1.8-4-4 1.8-4 4-4zm0 22.8c-3.3 0-8-1.7-8-5.3 0-3.7 4.7-5.5 8-5.5s8 1.8 8 5.5c0 3.6-4.7 5.3-8 5.3z" fill="currentColor" opacity=".3"/>
-          </svg>
-        </div>
-      }
-
-      @if (product().isFeatured && showBadge()) {
-        <span class="product-card__badge">Vedette</span>
-      }
-    </div>
-  </a>
-
-  <div class="product-card__body">
-    @if (product().category) {
-      <!-- TODO : coté backend, voir si il est possible de recup le nom du produit avec sa categorie lors de la selection -->
-      <p class="product-card__category">{{ product().category?.name || 'nothing' }}</p>
-    }
-
-    <h3 class="product-card__name">
-      <a [routerLink]="['/products', product().slug]">{{ product().name }}</a>
-    </h3>
-
-    @if (product().description) {
-      <p class="product-card__desc">{{ product().description }}</p>
-    }
-
-    <div class="product-card__footer">
-      <div class="product-card__price">
-        {{ formattedPrice }}
-        <span class="product-card__price-label">/ base</span>
-      </div>
-
-      <button
-        class="product-card__btn-add"
-        (click)="onAddToCart($event)"
-        [attr.aria-label]="'Ajouter ' + product.name + ' au panier'"
-        type="button"
-      >
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-          <path d="M9 3v12M3 9h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button>
+@if (loading()) {
+  <div class="card card--skeleton" aria-busy="true" aria-label="Chargement…">
+    <div class="card__img-skeleton"></div>
+    <div class="card__body">
+      <div class="skel skel--sm"></div>
+      <div class="skel skel--md"></div>
+      <div class="skel skel--lg"></div>
     </div>
   </div>
-</article>
+} @else {
+  <article class="product-card" [class.product-card--featured]="product().isFeatured && showBadge()">
+    <a [routerLink]="['/products', product().slug]" class="product-card__image-link" [attr.aria-label]="'Voir ' + product.name">
+      <div class="product-card__image">
+        @if (product().imageUrl) {
+          <img [src]="product().imageUrl" [alt]="product().name" loading="lazy" />
+        } @else {
+          <div class="product-card__placeholder" aria-hidden="true">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <path d="M24 8C15.2 8 8 15.2 8 24s7.2 16 16 16 16-7.2 16-16S32.8 8 24 8zm0 6c2.2 0 4 1.8 4 4s-1.8 4-4 4-4-1.8-4-4 1.8-4 4-4zm0 22.8c-3.3 0-8-1.7-8-5.3 0-3.7 4.7-5.5 8-5.5s8 1.8 8 5.5c0 3.6-4.7 5.3-8 5.3z" fill="currentColor" opacity=".3"/>
+            </svg>
+          </div>
+        }
+
+        @if (product().isFeatured && showBadge()) {
+          <span class="product-card__badge">Vedette</span>
+        }
+      </div>
+    </a>
+
+    <div class="product-card__body">
+      @if (product().category) {
+        <!-- TODO : coté backend, voir si il est possible de recup le nom du produit avec sa categorie lors de la selection -->
+        <p class="product-card__category">{{ product().category?.name || 'nothing' }}</p>
+      }
+
+      <h3 class="product-card__name">
+        <a [routerLink]="['/products', product().slug]">{{ product().name }}</a>
+      </h3>
+
+      @if (product().description) {
+        <p class="product-card__desc">{{ product().description }}</p>
+      }
+
+      <div class="product-card__footer">
+        <div class="product-card__price">
+          {{ formattedPrice }}
+          <span class="product-card__price-label">/ base</span>
+        </div>
+
+        <button
+          class="product-card__btn-add"
+          (click)="onAddToCart($event)"
+          [attr.aria-label]="'Ajouter ' + product.name + ' au panier'"
+          type="button"
+        >
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M9 3v12M3 9h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </article>
+}

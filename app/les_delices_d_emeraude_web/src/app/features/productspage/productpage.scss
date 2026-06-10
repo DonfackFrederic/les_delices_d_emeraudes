@@ -1,0 +1,19 @@
+:host { display: block; }
+
+.products-page {
+  max-width: 1200px; margin: 0 auto;
+  padding: 2rem 24px 5rem;
+  @media (max-width: 640px) { padding: 1.25rem 16px 3rem; }
+
+  &__header {
+    margin-bottom: 2rem; padding-bottom: 1.5rem;
+    border-bottom: 1px solid #eeeeee;
+  }
+
+  &__title {
+    font-size: clamp(24px, 4vw, 32px); font-weight: 800;
+    color: var(--primary-color); letter-spacing: -.5px; margin-bottom: 6px;
+  }
+
+  &__subtitle { font-size: 15px; color: var(--light-text); line-height: 1.6; }
+}

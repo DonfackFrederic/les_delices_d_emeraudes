@@ -1,0 +1,16 @@
+<div class="products-page">
+  <header class="products-page__header">
+    <h1 class="products-page__title">Nos créations</h1>
+    <p class="products-page__subtitle">Pâtisseries artisanales réalisées avec soin, sur commande.</p>
+  </header>
+
+  <app-product-filters />
+  <app-products-grid
+    [products]="store.products()"
+    [loading]="store.loading()"
+    [error]="store.error()"
+    [skeletonCount]="store.pageSize"
+    (addToCart)="onAddToCart($event)"
+  />
+  <app-products-pagination />
+</div>

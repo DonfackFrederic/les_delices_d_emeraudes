@@ -1,12 +1,13 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { PaginatedProducts, Product } from '@shared/types';
-import { ProductCard } from '../../../shared/components/product-card/product-card';
 import { ProductService } from '../../../core/services/product-service';
 import { CartService } from '../../../core/services/cart-service';
+import { ProductGrid } from "../../../shared/components/products-grid/products-grid";
 
 @Component({
   selector: 'app-featured-products',
-  imports: [ProductCard],
+  imports: [ProductGrid, RouterLink],
   templateUrl: './featured-products.html',
   styleUrl: './featured-products.scss',
 })
@@ -17,7 +18,7 @@ export class FeaturedProducts implements OnInit {
   products = signal<Product[]>([]);
   loading = signal(true);
   error = signal<string | null>(null);
- 
+  readonly pageSize = signal(6); 
   ngOnInit(): void {
     this.productService.getProducts({featured: true, limit: 6 }).subscribe({
       next: (res : PaginatedProducts) => {
@@ -33,10 +34,7 @@ export class FeaturedProducts implements OnInit {
   }
  
   onAddToCart(product: Product): void {
-    // Produits vedettes sans options sélectionnées → naviguer vers le détail
-    // Le CartService est appelé depuis ProductDetailPage après sélection des options
-    // TODO
-    // this.cartService.openDrawer();
+    this.cartService.quickAdd(product);
   }
  
   trackByProduct(_: number, product: Product): string {

@@ -1,0 +1,32 @@
+<div class="filters">
+
+  <app-search-bar
+    [value]="store.search()"
+    placeholder="Rechercher une pâtisserie…"
+    (searched)="store.setSearch($event)"
+  />
+
+  <div class="filters__chips" role="group" aria-label="Filtrer par catégorie">
+    <button class="chip" [class.chip--active]="store.category() === ''"
+            (click)="store.setCategory('')"
+            [attr.aria-pressed]="store.category() === ''"
+            type="button">Tout</button>
+
+    @for (cat of store.categories(); track cat.id) {
+      <button class="chip"
+              [class.chip--active]="store.category() === cat.slug"
+              (click)="store.setCategory(cat.slug)"
+              [attr.aria-pressed]="store.category() === cat.slug"
+              type="button">
+        {{ cat.name }}
+      </button>
+    }
+  </div>
+
+  <p class="filters__count" aria-live="polite" aria-atomic="true">
+    @if (!store.loading()) {
+      {{ store.total() }} résultat{{ store.total() !== 1 ? 's' : '' }}
+    }
+  </p>
+
+</div>

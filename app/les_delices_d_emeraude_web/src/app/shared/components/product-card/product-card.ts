@@ -12,6 +12,7 @@ export class ProductCard {
   product = input.required<Product>();
   showBadge = input(true);
   addToCart = output<Product>();
+  loading = input(false);
  
   get formattedPrice(): string | null {
     const value = Number(this.product().basePrice);

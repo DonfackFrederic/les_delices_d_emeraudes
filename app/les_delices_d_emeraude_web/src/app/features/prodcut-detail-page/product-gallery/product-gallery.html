@@ -1,0 +1,39 @@
+<div class="gallery">
+
+  <!-- Image principale -->
+  <div class="gallery__main">
+    @if (store.loading()) {
+      <div class="gallery__main-skel" aria-hidden="true"></div>
+    } @else if (store.activeImage()) {
+      <img
+        [src]="store.activeImage()!"
+        [alt]="store.product()?.name"
+        class="gallery__main-img"
+      />
+    } @else {
+      <div class="gallery__placeholder" aria-hidden="true">
+        <i class="ti ti-cake"></i>
+      </div>
+    }
+  </div>
+
+  <!-- Miniatures -->
+  @if (store.galleryImages().length > 1) {
+    <div class="gallery__thumbs" role="list" aria-label="Images du produit">
+      @for (img of store.galleryImages(); track $index) {
+        <button
+          class="gallery__thumb"
+          [class.gallery__thumb--active]="store.activeImageIndex() === $index"
+          (click)="store.setActiveImage($index)"
+          [attr.aria-label]="'Image ' + ($index + 1)"
+          [attr.aria-pressed]="store.activeImageIndex() === $index"
+          type="button"
+          role="listitem"
+        >
+          <img [src]="img" [alt]="'Vue ' + ($index + 1)" loading="lazy" />
+        </button>
+      }
+    </div>
+  }
+
+</div>

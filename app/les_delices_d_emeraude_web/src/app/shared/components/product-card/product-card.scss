@@ -153,3 +153,39 @@
     }
   }
 }
+
+// ── Skeleton ───────────────────────────────────────────────
+@mixin skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e4e4e4 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.card--skeleton {
+  border: 1px solid #e8e8e8;
+  border-radius: 16px;
+  overflow: hidden;
+}
+ 
+.card__img-skeleton {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  @include skeleton;
+}
+ 
+.card__body {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+ 
+.skel {
+  height: 12px;
+  border-radius: 6px;
+  @include skeleton;
+ 
+  &--sm  { width: 40%; }
+  &--md  { width: 70%; height: 14px; }
+  &--lg  { width: 90%; }
+}
