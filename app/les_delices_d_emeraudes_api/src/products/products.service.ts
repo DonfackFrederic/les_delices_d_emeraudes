@@ -29,7 +29,7 @@ export class ProductsService {
   }
 
   async findBySlug(slug: string, opts?: { include?: string }) {
-    let { data, error } = await this.productsRepository.findBySlug(slug, opts?.include);
+    let { data, error } = await this.productsRepository.findBySlug(slug);
     data = toCamel(data)
     this.handleSupabaseError(error as PostgrestError | null);
 

@@ -17,7 +17,7 @@ export function toCamel(obj: any): any {
       ? key.replace(/_([a-z])/g, (_, c) => c.toUpperCase())
       : key;
 
-    newObj[camelKey] = obj[key];
+    newObj[camelKey] = toCamel(obj[key]);
   }
 
   return newObj;
@@ -26,11 +26,17 @@ export function toCamel(obj: any): any {
 /* transforms camelCase keys to snake_case recursively in an object or array. Leaves non-object values unchanged.
 */
 export function toSnake(obj: any): any {
+  if (obj === null || typeof obj !== 'object') return obj;
+
+  if (Array.isArray(obj)) {
+    return obj.map((item) => toSnake(item));
+  }
+
   const newObj: any = {};
 
   for (const key in obj) {
     const snakeKey = key.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
-    newObj[snakeKey] = obj[key];
+    newObj[snakeKey] = toSnake(obj[key]);
   }
 
   return newObj;
