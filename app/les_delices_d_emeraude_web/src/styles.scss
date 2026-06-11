@@ -1,8 +1,8 @@
 @use "sass:color";
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
-
 :root {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
   --primary-color: #004D40;
   --secondary-color: #00A86B;
   --text-color: #333;
@@ -33,14 +33,14 @@ html {
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
-  color: #333;
+  font-family: var(--font-sans);
+  color: var(--text-color);
   line-height: 1.6;
   overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-sans);
   line-height: 1.2;
 }
 
@@ -51,7 +51,7 @@ img {
 }
 
 button {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-sans);
 }
 
 main {

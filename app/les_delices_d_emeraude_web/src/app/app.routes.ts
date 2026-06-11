@@ -4,9 +4,11 @@ import { Productspage } from './features/productspage/productspage';
 import { ProductDetailPage } from './features/prodcut-detail-page/prodcut-detail-page';
 
 export const routes: Routes = [
-  { path: '', component: Homepage },
+  { path: '', redirectTo: 'home', pathMatch: 'full'},
+  { path: 'home', component: Homepage },
   { path: 'products', component: Productspage },
   { path: 'products/:slug', component: ProductDetailPage },
+  { path: '', loadChildren: () => import('./features/auth/auth.route').then((m) => m.AUTH_ROUTES) },
   // { path: 'login', component: LoginPageComponent },
   // { path: 'register', component: RegisterPageComponent },
   // {
@@ -25,5 +27,5 @@ export const routes: Routes = [
   //   component: AdminLayoutComponent,
   //   children: [ /* Sprint 3 */ ]
   // },
-  { path: '**', redirectTo: '' }
+  { path: '**', redirectTo: 'home' }
 ];
