@@ -1,11 +1,11 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { Auth } from '../services/auth';
+import { AuthService } from '../services/auth.service';
 import { inject } from '@angular/core';
 import { from, switchMap } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const auth : Auth = inject(Auth);
-  return from(auth.getToken()).pipe(
+  const auth : AuthService = inject(AuthService);
+  return from(auth.getAccessToken()).pipe(
       switchMap(token => {
         if (token) {
           req = req.clone({
