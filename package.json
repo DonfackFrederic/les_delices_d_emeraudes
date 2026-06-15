@@ -6,7 +6,8 @@
     "packages/*"
   ],
   "scripts": {
-    "build:web": "npm run build --workspace=les_delices_d_emeraude_web",
-    "build:api": "npm run build --workspace=les_delices_d_emeraudes_api"
+    "build:shared": "npm run build --workspace=@shared/types",
+    "build:web": "npm run build:shared && npm run build --workspace=les-delices-d-emeraude-web",
+    "build:api": "npm run build:shared && npm run build --workspace=les_delices_d_emeraudes_api"
   }
 }
