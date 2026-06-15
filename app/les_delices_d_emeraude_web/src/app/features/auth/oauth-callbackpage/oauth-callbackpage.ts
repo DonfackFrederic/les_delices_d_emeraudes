@@ -19,7 +19,7 @@ import { AuthService } from '../../../core/services/auth.service';
 export class OAuthCallbackpage {private auth = inject(AuthService);
   private router = inject(Router);
 
-  ngOnInit() {
+  constructor() {
     // Supabase lit automatiquement le hash (#access_token=...) depuis l'URL
     // onAuthStateChange dans AuthService est notifié → _session est mis à jour
     // On attend juste que le statut soit résolu
