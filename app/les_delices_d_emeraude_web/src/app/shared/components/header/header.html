@@ -1,0 +1,169 @@
+<header class="header">
+  <div class="header-container">
+
+    <!-- Logo -->
+    <div class="logo">
+      <a routerLink="/">
+        <img src="logo.png" alt="Les Délices d'Émeraude">
+      </a>
+    </div>
+
+    <!-- Nav principale -->
+    <nav class="nav" [class.open]="isMenuOpen()" aria-label="Navigation principale">
+      <ul class="nav-list">
+        @for (item of menuItems; track item.label) {
+          <li class="nav-item">
+            <a [routerLink]="item.link" class="nav-link" (click)="closeMenu()">
+              {{ item.label }}
+            </a>
+          </li>
+        }
+
+        <!-- Liens auth visibles uniquement sur mobile (dans le menu burger) -->
+        @if (!isAuthenticated()) {
+          <li class="nav-item nav-item--mobile-auth">
+            <a routerLink="/login" class="nav-link" (click)="closeMenu()">
+              Connexion
+            </a>
+          </li>
+          <li class="nav-item nav-item--mobile-auth">
+            <a routerLink="/register" class="nav-link nav-link--cta" (click)="closeMenu()">
+              Créer un compte
+            </a>
+          </li>
+        } @else {
+          <li class="nav-item nav-item--mobile-auth">
+            <a routerLink="/dashboard/orders" class="nav-link" (click)="closeMenu()">
+              Mes commandes
+            </a>
+          </li>
+          <li class="nav-item nav-item--mobile-auth">
+            <a routerLink="/dashboard/profile" class="nav-link" (click)="closeMenu()">
+              Mon profil
+            </a>
+          </li>
+          <li class="nav-item nav-item--mobile-auth">
+            <button class="nav-link nav-link--signout" (click)="signOut()">
+              Déconnexion
+            </button>
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <!-- Actions header (desktop) -->
+    <div class="header-actions">
+
+      <!-- Panier -->
+      <button class="cart-btn" aria-label="Panier (0 article)">
+        <span class="cart-icon" aria-hidden="true">🛒</span>
+        <span class="cart-text">Panier (0)</span>
+      </button>
+
+      <!-- Non connecté : boutons Connexion + Inscription -->
+      @if (!isAuthenticated()) {
+        <div class="auth-actions">
+          <a routerLink="/login" class="btn-login">Connexion</a>
+          <a routerLink="/register" class="btn-register">S'inscrire</a>
+        </div>
+      }
+
+      <!-- Connecté : avatar + dropdown -->
+      @if (isAuthenticated()) {
+        <div class="profile-menu-wrapper">
+          <button
+            class="profile-btn"
+            (click)="toggleProfileMenu()"
+            [attr.aria-expanded]="isProfileMenuOpen()"
+            aria-haspopup="true"
+            aria-label="Menu de votre compte"
+          >
+            <span class="profile-avatar" aria-hidden="true">
+              {{ userInitials() }}
+            </span>
+            <span class="profile-name">{{ userDisplayName() }}</span>
+            <svg
+              class="profile-chevron"
+              [class.profile-chevron--open]="isProfileMenuOpen()"
+              width="14" height="14" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2"
+              aria-hidden="true"
+            >
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+
+          <!-- Dropdown -->
+          @if (isProfileMenuOpen()) {
+            <div
+              class="profile-dropdown"
+              role="menu"
+              aria-label="Options du compte"
+            >
+              <div class="profile-dropdown__header">
+                <span class="profile-dropdown__avatar" aria-hidden="true">
+                  {{ userInitials() }}
+                </span>
+                <div>
+                  <p class="profile-dropdown__name">{{ userDisplayName() }}</p>
+                  <p class="profile-dropdown__role">Client</p>
+                </div>
+              </div>
+
+              <div class="profile-dropdown__divider"></div>
+
+              <a
+                routerLink="/dashboard/orders"
+                class="profile-dropdown__item"
+                role="menuitem"
+                (click)="closeProfileMenu()"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                Mes commandes
+              </a>
+
+              <a
+                routerLink="/dashboard/profile"
+                class="profile-dropdown__item"
+                role="menuitem"
+                (click)="closeProfileMenu()"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Mon profil
+              </a>
+
+              <div class="profile-dropdown__divider"></div>
+
+              <button
+                class="profile-dropdown__item profile-dropdown__item--danger"
+                role="menuitem"
+                (click)="signOut()"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Déconnexion
+              </button>
+            </div>
+
+            <!-- Overlay pour fermer le dropdown en cliquant ailleurs -->
+            <div
+              class="profile-dropdown__overlay"
+              (click)="closeProfileMenu()"
+              aria-hidden="true"
+            ></div>
+          }
+        </div>
+      }
+
+      <!-- Bouton hamburger -->
+      <button
+        class="menu-toggle"
+        (click)="toggleMenu()"
+        [attr.aria-expanded]="isMenuOpen()"
+        aria-label="Ouvrir le menu"
+      >
+        <span class="hamburger" [class.hamburger--open]="isMenuOpen()"></span>
+      </button>
+    </div>
+
+  </div>
+</header>

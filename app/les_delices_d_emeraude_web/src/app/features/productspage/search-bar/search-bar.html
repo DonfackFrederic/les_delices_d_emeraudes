@@ -1,0 +1,19 @@
+<div class="search-bar" role="search">
+  <label for="sb-input" class="sr-only">{{ placeholder }}</label>
+  <i class="ti ti-search search-bar__icon" aria-hidden="true"></i>
+  <input
+    id="sb-input"
+    class="search-bar__input"
+    type="search"
+    [placeholder]="placeholder"
+    [value]="model()"
+    (input)="onInput($any($event.target).value)"
+    autocomplete="off"
+  />
+  @if (model()) {
+    <button class="search-bar__clear" type="button"
+            (click)="clear()" aria-label="Effacer la recherche">
+      <i class="ti ti-x" aria-hidden="true"></i>
+    </button>
+  }
+</div>

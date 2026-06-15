@@ -1,0 +1,35 @@
+:host { display: block; }
+
+.pagination {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 6px;
+  margin-top: 2.5rem; padding-top: 1.5rem;
+  border-top: 1px solid #eeeeee;
+
+  &__btn {
+    min-width: 36px; height: 36px; padding: 0 10px;
+    border: 1px solid #e0e0e0; border-radius: 8px;
+    background: var(--background-color); color: var(--text-color);
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color .15s, color .15s, background .15s;
+
+    &:hover:not(:disabled) { border-color: var(--secondary-color); color: var(--secondary-color); }
+    &:disabled { opacity: .35; cursor: not-allowed; }
+    &:focus-visible { outline: 2px solid var(--secondary-color); outline-offset: 2px; }
+
+    &--active {
+      background: var(--primary-color); border-color: var(--primary-color);
+      color: #fff; cursor: default;
+      &:hover { background: var(--primary-color); color: #fff; }
+    }
+    i { font-size: 16px; }
+  }
+
+  &__dots { font-size: 13px; color: var(--light-text); padding: 0 4px; user-select: none; }
+
+  &__range {
+    font-size: 13px; color: var(--light-text); margin-left: 8px; white-space: nowrap;
+    @media (max-width: 420px) { width: 100%; text-align: center; margin-left: 0; }
+  }
+}

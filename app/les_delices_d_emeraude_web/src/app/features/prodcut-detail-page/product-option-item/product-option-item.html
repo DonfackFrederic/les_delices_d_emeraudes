@@ -1,0 +1,78 @@
+<div class="option">
+
+  <!-- Label + badge requis -->
+  <div class="option__header">
+    <span class="option__label">{{ option.name }}</span>
+    @if (option.isRequired) {
+      <span class="option__required" aria-label="Option requise">
+        <span aria-hidden="true">*</span>
+        <span class="option__req-badge">Requis</span>
+      </span>
+    } @else {
+      <span class="option__optional">(facultatif)</span>
+    }
+  </div>
+
+  <!-- ── Type SELECT → radio buttons ─────────────────────── -->
+  @if (option.type === 'select') {
+    <div class="option__radio-grid" role="group" [attr.aria-label]="option.name">
+      @for (val of option.values; track val.id) {
+        <button
+          class="option__chip"
+          [class.option__chip--active]="isValueSelected(val)"
+          (click)="selectValue(val)"
+          [attr.aria-pressed]="isValueSelected(val)"
+          type="button"
+        >
+          {{ val.value }}
+          @if (val.priceModifier !== 0) {
+            <span class="option__chip-mod">{{ formatModifier(val.priceModifier) }}</span>
+          }
+        </button>
+      }
+    </div>
+  }
+
+  <!-- ── Type TEXT → champ libre ─────────────────────────── -->
+  @if (option.type === 'text') {
+    <div class="option__text-wrap">
+      <label [for]="'opt-' + option.id" class="sr-only">{{ option.name }}</label>
+      <textarea
+        [id]="'opt-' + option.id"
+        class="option__textarea"
+        [placeholder]="'Ex : Joyeux anniversaire Sophie ! 🎉'"
+        maxlength="200"
+        rows="3"
+        [value]="textValue()"
+        (input)="onTextInput($any($event.target).value)"
+      ></textarea>
+      <span class="option__char-count" aria-live="polite">
+        {{ textValue().length }}/200
+      </span>
+    </div>
+  }
+
+  <!-- ── Type BOOLEAN → checkbox ─────────────────────────── -->
+  @if (option.type === 'boolean') {
+    @for (val of option.values; track val.id) {
+      <button
+        class="option__bool"
+        [class.option__bool--active]="isBooleanChecked()"
+        (click)="toggleBoolean(val.priceModifier)"
+        [attr.aria-pressed]="isBooleanChecked()"
+        type="button"
+      >
+        <span class="option__bool-check" aria-hidden="true">
+          @if (isBooleanChecked()) {
+            <i class="ti ti-check"></i>
+          }
+        </span>
+        <span class="option__bool-label">{{ option.name }}</span>
+        @if (val.priceModifier !== 0) {
+          <span class="option__bool-price">{{ formatModifier(val.priceModifier) }}</span>
+        }
+      </button>
+    }
+  }
+
+</div>

@@ -1,0 +1,89 @@
+<div class="price-block">
+
+  <!-- Prix -->
+  <div class="price-block__price-wrap">
+    <p class="price-block__label">Prix total estimé</p>
+    <p class="price-block__price" aria-live="polite" aria-atomic="true">
+      {{ format(store.totalPrice()) }}
+      <span class="price-block__currency">CAD</span>
+    </p>
+
+    <p class="price-block__detail" aria-live="polite">
+      Prix de base : {{ format(store.product()?.basePrice ?? 0) }}
+
+      @for (item of store.priceBreakdown(); track item.label) {
+        · <span class="price-block__mod">+{{ format(item.amount) }}</span>
+      }
+
+      @if (store.quantity() > 1) {
+        · × {{ store.quantity() }}
+      }
+    </p>
+  </div>
+
+  <div class="price-block__divider" aria-hidden="true"></div>
+
+  <!-- Quantité -->
+  <div class="price-block__qty-row">
+    <span class="price-block__qty-label">Quantité</span>
+    <div class="price-block__qty-ctrl" role="group" aria-label="Quantité">
+      <button
+        class="price-block__qty-btn"
+        type="button"
+        (click)="store.setQuantity(store.quantity() - 1)"
+        [disabled]="store.quantity() <= 1"
+        aria-label="Diminuer la quantité"
+      >
+        <i class="ti ti-minus" aria-hidden="true"></i>
+      </button>
+      <span class="price-block__qty-val" aria-live="polite">{{ store.quantity() }}</span>
+      <button
+        class="price-block__qty-btn"
+        type="button"
+        (click)="store.setQuantity(store.quantity() + 1)"
+        [disabled]="store.quantity() >= 99"
+        aria-label="Augmenter la quantité"
+      >
+        <i class="ti ti-plus" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Notice délai -->
+  <div class="price-block__notice" role="note">
+    <i class="ti ti-info-circle" aria-hidden="true"></i>
+    <p>
+      Commande à passer au moins <strong>48h</strong> à l'avance.
+      Délai de préparation variable selon la taille et la décoration choisies.
+    </p>
+  </div>
+
+  <!-- CTA -->
+  <button
+    class="price-block__cta"
+    type="button"
+    (click)="store.addToCart()"
+    [disabled]="!store.isFormValid()"
+    [attr.aria-disabled]="!store.isFormValid()"
+  >
+    <i class="ti ti-shopping-cart" aria-hidden="true"></i>
+    @if (store.isFormValid()) {
+      Ajouter au panier — {{ format(store.totalPrice()) }}
+    } @else {
+      Veuillez compléter les options requises
+    }
+  </button>
+
+  @if (!store.isFormValid() && store.requiredOptions().length > 0) {
+    <p class="price-block__hint" role="alert">
+      <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+      Options manquantes :
+      @for (opt of store.requiredOptions(); track opt.id) {
+        @if (!store.selections().some(s => s.optionId === opt.id)) {
+          <strong>{{ opt.name }}</strong>
+        }
+      }
+    </p>
+  }
+
+</div>

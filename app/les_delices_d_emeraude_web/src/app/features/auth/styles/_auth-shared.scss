@@ -1,0 +1,455 @@
+// features/auth/styles/_auth-shared.scss
+// Importé dans login.page et register.page
+
+@use "sass:meta";
+
+// ─── Variables locales (mappées depuis :root) ───────────────────────────────
+$primary: var(--primary-color);
+$secondary: var(--secondary-color);
+$primary-10:  rgba(0, 77, 64, 0.08);
+$secondary-10:rgba(0, 168, 107, 0.10);
+$error:       #c62828;
+$error-bg:    #fdecea;
+$success:     #1b5e20;
+$success-bg:  #e8f5e9;
+$border:      #e0e0e0;
+$radius:      10px;
+
+// ─── Layout split-screen ────────────────────────────────────────────────────
+.auth-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ─── Panneau gauche — Branding ───────────────────────────────────────────────
+.auth-brand {
+  background: $primary;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+
+  // Cercles décoratifs (purs CSS, pas de pseudo-elements superposés)
+  &::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: rgba($secondary, 0.15);
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    left: -60px;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: rgba($secondary, 0.10);
+    pointer-events: none;
+  }
+
+  @media (max-width: 768px) { display: none; }
+}
+
+.auth-brand__inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 48px 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.auth-brand__top { 
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: auto;
+}
+
+.auth-brand__logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 48px;
+}
+
+.auth-brand__logo-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: $secondary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+
+  &--sm {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+.auth-brand__name {
+  display: block;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.auth-brand__tagline {
+  display: block;
+  color: rgba(#fff, 0.6);
+  font-size: 12px;
+}
+
+.auth-brand__headline {
+  color: #fff;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1.25;
+  margin-bottom: 16px;
+}
+
+.auth-brand__sub {
+  color: rgba(#fff, 0.72);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.auth-brand__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 28px;
+}
+
+.auth-brand__pill {
+  background: rgba(#fff, 0.12);
+  color: rgba(#fff, 0.85);
+  font-size: 12px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(#fff, 0.2);
+}
+
+.auth-brand__copy {
+  color: rgba(#fff, 0.4);
+  font-size: 12px;
+}
+
+// ─── Panneau droit — Formulaire ──────────────────────────────────────────────
+.auth-form-panel {
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.auth-form-inner {
+  width: 100%;
+  max-width: 400px;
+}
+
+// Logo mobile (masqué sur desktop)
+.auth-mobile-logo {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 32px;
+
+  @media (max-width: 768px) { display: flex; }
+}
+
+.auth-mobile-logo__name {
+  font-size: 15px;
+  font-weight: 500;
+  color: $primary;
+}
+
+.auth-form__title {
+  font-size: 26px;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.auth-form__sub {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 28px;
+}
+
+// ─── Bouton Google ───────────────────────────────────────────────────────────
+.auth-btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 44px;
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: $radius;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+
+  &:hover:not(:disabled) {
+    border-color: #aaa;
+    background: #f9f9f9;
+  }
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+// ─── Séparateur "ou" ────────────────────────────────────────────────────────
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+  color: #999;
+  font-size: 13px;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: $border;
+  }
+}
+
+// ─── Alertes ────────────────────────────────────────────────────────────────
+.auth-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 14px;
+  background: $error-bg;
+  color: $error;
+  border-radius: $radius;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+
+  &--success {
+    background: $success-bg;
+    color: $success;
+  }
+
+  svg { flex-shrink: 0; margin-top: 1px; }
+}
+
+// ─── Champs ─────────────────────────────────────────────────────────────────
+.auth-field {
+  margin-bottom: 16px;
+}
+
+.auth-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 0; // les .auth-field intérieurs ont leur propre mb
+}
+
+.auth-field__label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.auth-field__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+
+  .auth-field__label { margin-bottom: 0; }
+}
+
+.auth-field__input {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  border: 1.5px solid $border;
+  border-radius: $radius;
+  font-size: 14px;
+  color: #1a1a1a;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &::placeholder { color: #bbb; }
+
+  &:focus {
+    border-color: $secondary;
+    box-shadow: 0 0 0 3px rgba($secondary, 0.12);
+  }
+
+  &--error {
+    border-color: $error;
+    &:focus { box-shadow: 0 0 0 3px rgba($error, 0.1); }
+  }
+}
+
+.auth-field__password-wrap {
+  position: relative;
+
+  .auth-field__input { padding-right: 42px; }
+}
+
+.auth-field__pw-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+
+  &:hover { color: $primary; }
+  &:focus-visible { outline: 2px solid $secondary; }
+}
+
+.auth-field__error {
+  display: block;
+  font-size: 12px;
+  color: $error;
+  margin-top: 4px;
+}
+
+// ─── Barre de force mot de passe ────────────────────────────────────────────
+.auth-pw-strength {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.auth-pw-strength__bar {
+  flex: 1;
+  height: 4px;
+  background: $border;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.auth-pw-strength__fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease, background 0.3s;
+
+  &--weak      { background: #ef5350; }
+  &--fair      { background: #ff9800; }
+  &--good      { background: #ffc107; }
+  &--strong    { background: $secondary; }
+  &--very-strong { background: $primary; }
+}
+
+.auth-pw-strength__label {
+  font-size: 11px;
+  color: #888;
+  min-width: 56px;
+  text-align: right;
+}
+
+// ─── Bouton principal ────────────────────────────────────────────────────────
+.auth-btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 44px;
+  background: $primary;
+  color: #fff;
+  border: none;
+  border-radius: $radius;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background 0.15s;
+
+  // Use a CSS-friendly hover effect. If $primary is a Sass color this will
+  // be overridden by the background color change; otherwise use a brightness
+  // filter so CSS variables work (e.g. var(--primary-color)).
+  &:hover:not(:disabled) {
+    @if meta.type-of($primary) == 'color' {
+      background: darken($primary, 8%);
+    } @else {
+      background: $primary;
+      filter: brightness(0.92);
+    }
+  }
+  &:disabled { opacity: 0.55; cursor: not-allowed; }
+}
+
+// ─── Spinner ────────────────────────────────────────────────────────────────
+.auth-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(#fff, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ─── Liens & footer ─────────────────────────────────────────────────────────
+.auth-link {
+  color: $secondary;
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover { text-decoration: underline; }
+
+  &--small {
+    font-size: 12px;
+    font-weight: 400;
+  }
+}
+
+.auth-form__footer {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 13px;
+  color: #666;
+}
+
+.auth-terms {
+  font-size: 12px;
+  color: #888;
+  text-align: center;
+  margin-top: 14px;
+  line-height: 1.55;
+}

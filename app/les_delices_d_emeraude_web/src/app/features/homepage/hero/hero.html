@@ -1,0 +1,35 @@
+<section class="hero" id="home">
+  <div class="slider">
+    @for (slide of slides; track $index) {
+      <div class="slide" [class.active]="currentSlide() === $index">
+        <div class="slide-image" [style.background-image]="'url(' + slide.image + ')'"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <div class="container">
+            <p class="subtitle">{{ slide.subtitle }}</p>
+            <h1 class="title">{{ slide.title }}</h1>
+            <p class="description">{{ slide.description }}</p>
+            <button class="cta-button" routerLink="/products"> Découvrir nos Créations</button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <button class="slider-control prev" (click)="prevSlide()">
+    <span>‹</span>
+  </button>
+  <button class="slider-control next" (click)="nextSlide()">
+    <span>›</span>
+  </button>
+
+  <div class="slider-dots">
+    @for (slide of slides; track $index) {
+      <button
+        class="dot"
+        [class.active]="currentSlide() === $index"
+        (click)="goToSlide($index)">
+      </button>
+    }
+  </div>
+</section>

@@ -1,0 +1,91 @@
+<div class="detail-page">
+
+  <!-- Breadcrumb -->
+  <nav class="detail-page__breadcrumb" aria-label="Fil d'Ariane">
+    <a routerLink="/" class="detail-page__breadcrumb-link">Accueil</a>
+    <i class="ti ti-chevron-right" aria-hidden="true"></i>
+    <a routerLink="/products" class="detail-page__breadcrumb-link">Produits</a>
+    @if (store.product()) {
+      <i class="ti ti-chevron-right" aria-hidden="true"></i>
+      <span class="detail-page__breadcrumb-current">{{ store.product()!.name }}</span>
+    }
+  </nav>
+
+  @if (store.loading()) {
+    <div class="detail-page__layout">
+      <!-- Skeleton galerie -->
+      <div class="detail-page__col-left">
+        <div class="detail-page__skel-img"></div>
+        <div class="detail-page__skel-thumbs">
+          @for (_ of [1,2,3,4]; track $index) {
+            <div class="detail-page__skel-thumb"></div>
+          }
+        </div>
+      </div>
+      <!-- Skeleton info -->
+      <div class="detail-page__col-right">
+        <div class="skel w-30 h-12"></div>
+        <div class="skel w-80 h-28 mt-8"></div>
+        <div class="skel w-60 h-16 mt-4"></div>
+        <div class="skel w-100 h-80 mt-16"></div>
+      </div>
+    </div>
+  } @else if (store.error()) {
+    <div class="detail-page__error" role="alert">
+      <i class="ti ti-alert-circle"></i>
+      <p>{{ store.error() }}</p>
+      <a routerLink="/products" class="detail-page__back-link">← Retour au catalogue</a>
+    </div>
+  } @else if (store.product()) {
+    <div class="detail-page__layout">
+
+      <!-- Colonne gauche : galerie -->
+      <div class="detail-page__col-left">
+        <app-product-gallery />
+      </div>
+
+      <!-- Colonne droite : infos + options + prix -->
+      <div class="detail-page__col-right">
+
+        <!-- Badges -->
+        <div class="detail-page__badges">
+          @if (store.product()!.category) {
+            <span class="detail-page__badge detail-page__badge--cat">
+              {{ store.product()!.category!.name }}
+            </span>
+          }
+          @if (store.product()!.isFeatured) {
+            <span class="detail-page__badge detail-page__badge--vedette">
+              <i class="ti ti-star" aria-hidden="true"></i> Vedette
+            </span>
+          }
+        </div>
+
+        <!-- Titre + description -->
+        <h1 class="detail-page__title">{{ store.product()!.name }}</h1>
+        @if (store.product()!.description) {
+          <p class="detail-page__desc">{{ store.product()!.description }}</p>
+        }
+
+        <!-- Bloc prix -->
+        <app-product-price-block />
+
+        <!-- Séparateur -->
+        <div class="detail-page__section-sep" aria-hidden="true"></div>
+
+        <!-- Options -->
+        @if (store.product()!.options.length) {
+          <app-product-options />
+        }
+
+        <!-- Lien retour mobile -->
+        <a routerLink="/products" class="detail-page__back-link">
+          <i class="ti ti-arrow-left" aria-hidden="true"></i>
+          Retour au catalogue
+        </a>
+
+      </div>
+    </div>
+  }
+
+</div>
