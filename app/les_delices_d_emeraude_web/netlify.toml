@@ -1,8 +1,13 @@
 [build]
-  command = "npm run build"
-  publish = "dist/les_delices_d_emeraude_web/browser"
+  base    = "."
+  command = "npm install && npm run build:web"
+  publish = "app/les_delices_d_emeraude_web/dist/les-delices-d-emeraude-web/browser"
 
+[build.environment]
+  NODE_VERSION = "22"
+
+# SPA routing — évite les 404 sur F5 / navigation directe
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from   = "/*"
+  to     = "/index.html"
   status = 200
