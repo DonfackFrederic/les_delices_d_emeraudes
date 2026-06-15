@@ -1,8 +1,12 @@
 {
-  "name": "les-delices-demeraude",
+  "name": "les-delices-d-emeraudes",
   "private": true,
   "workspaces": [
-    "apps/*",
+    "app/*",
     "packages/*"
-  ]
+  ],
+  "scripts": {
+    "build:web": "npm run build --workspace=les_delices_d_emeraude_web",
+    "build:api": "npm run build --workspace=les_delices_d_emeraudes_api"
+  }
 }
