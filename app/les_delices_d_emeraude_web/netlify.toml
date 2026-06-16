@@ -1,0 +1,5 @@
+# SPA routing — évite les 404 sur F5 / navigation directe
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200
