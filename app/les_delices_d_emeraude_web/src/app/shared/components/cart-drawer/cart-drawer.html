@@ -1,0 +1,238 @@
+<!-- Rendu conditionnel : le drawer est toujours dans le DOM pour l'animation -->
+<div
+  class="drawer-backdrop"
+  [class.drawer-backdrop--visible]="cart.isOpen()"
+  (click)="cart.closeDrawer()"
+  aria-hidden="true"
+></div>
+
+<aside
+  #drawerPanel
+  class="drawer"
+  [class.drawer--open]="cart.isOpen()"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Votre panier"
+  [attr.tabindex]="cart.isOpen() ? 0 : -1"
+  (keydown)="onKeydown($event)"
+>
+  <!-- ── En-tête ──────────────────────────────────────────────────────────── -->
+  <header class="drawer__header">
+    <div class="drawer__title-wrap">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+        <path d="M6 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
+        <path d="M17 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
+        <path d="M17 17h-11v-14h-2"/>
+        <path d="M6 5l14 1l-1 7h-13"/>
+      </svg>
+      <h2 class="drawer__title">
+        Mon panier
+        @if (cart.itemCount() > 0) {
+          <span class="drawer__count">({{ cart.itemCount() }})</span>
+        }
+      </h2>
+    </div>
+
+    <button
+      class="drawer__close"
+      (click)="cart.closeDrawer()"
+      aria-label="Fermer le panier"
+      type="button"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+        <path d="M18 6l-12 12"/><path d="M6 6l12 12"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- ── Corps ────────────────────────────────────────────────────────────── -->
+  <div class="drawer__body">
+
+    <!-- Panier vide -->
+    @if (cart.items().length === 0) {
+      <div class="drawer__empty">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="1.25"
+             stroke-linecap="round" stroke-linejoin="round"
+             class="drawer__empty-icon" aria-hidden="true">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M6 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
+          <path d="M17 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
+          <path d="M17 17h-11v-14h-2"/>
+          <path d="M6 5l14 1l-1 7h-13"/>
+        </svg>
+        <p class="drawer__empty-title">Votre panier est vide</p>
+        <p class="drawer__empty-sub">Parcourez notre catalogue et ajoutez vos délices préférés.</p>
+        <a routerLink="/products">
+          <button class="btn btn--outline" (click)="cart.closeDrawer()" type="button">
+            Voir les produits
+          </button>
+        </a>
+      </div>
+    }
+
+    <!-- Liste des items -->
+    @if (cart.items().length > 0) {
+      <ul class="drawer__items" aria-label="Articles dans le panier">
+        @for (item of cart.items(); track trackByIndex($index); let i = $index) {
+          <li class="cart-item">
+
+            <!-- Image -->
+            <div class="cart-item__img-wrap">
+              @if (item.product.imageUrl) {
+                <img
+                  [src]="item.product.imageUrl"
+                  [alt]="item.product.name"
+                  class="cart-item__img"
+                  loading="lazy"
+                  width="72"
+                  height="72"
+                />
+              } @else {
+                <div class="cart-item__img-placeholder" aria-hidden="true">🍰</div>
+              }
+            </div>
+
+            <!-- Détails -->
+            <div class="cart-item__details">
+              <p class="cart-item__name">{{ item.product.name }}</p>
+
+              <!-- Options -->
+              @if (item.selectedOptions.length > 0) {
+                <ul class="cart-item__options" aria-label="Options choisies">
+                  @for (opt of item.selectedOptions; track opt.optionId) {
+                    <li class="cart-item__option">
+                      <span class="cart-item__option-name">{{ opt.optionName }} :</span>
+                      {{ opt.value }}
+                      @if (opt.priceModifier !== 0) {
+                        <span class="cart-item__option-modifier">
+                          ({{ opt.priceModifier > 0 ? '+' : '' }}{{ formatPrice(opt.priceModifier) }})
+                        </span>
+                      }
+                    </li>
+                  }
+                </ul>
+              }
+
+              <!-- Commentaire -->
+              @if (item.comment) {
+                <p class="cart-item__comment">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                       fill="none" stroke="currentColor" stroke-width="2"
+                       stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M8 9h8"/><path d="M8 13h6"/>
+                    <path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"/>
+                  </svg>
+                  {{ item.comment }}
+                </p>
+              }
+
+              <!-- Ligne inférieure : quantité + prix -->
+              <div class="cart-item__footer">
+
+                <!-- Contrôles quantité -->
+                <div class="qty" role="group" [attr.aria-label]="'Quantité de ' + item.product.name">
+                  <button
+                    class="qty__btn"
+                    (click)="cart.updateQuantity(i, item.quantity - 1)"
+                    [attr.aria-label]="'Diminuer la quantité de ' + item.product.name"
+                    type="button"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                      <path d="M5 12l14 0"/>
+                    </svg>
+                  </button>
+
+                  <span class="qty__value" aria-live="polite">{{ item.quantity }}</span>
+
+                  <button
+                    class="qty__btn"
+                    (click)="cart.updateQuantity(i, item.quantity + 1)"
+                    [attr.aria-label]="'Augmenter la quantité de ' + item.product.name"
+                    type="button"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                      <path d="M12 5l0 14"/><path d="M5 12l14 0"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- Prix ligne -->
+                <span class="cart-item__price">{{ formatPrice(item.lineTotal) }}</span>
+
+                <!-- Supprimer -->
+                <button
+                  class="cart-item__remove"
+                  (click)="cart.removeItem(i)"
+                  [attr.aria-label]="'Supprimer ' + item.product.name + ' du panier'"
+                  type="button"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                       fill="none" stroke="currentColor" stroke-width="2"
+                       stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M4 7l16 0"/><path d="M10 11l0 6"/><path d="M14 11l0 6"/>
+                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/>
+                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <!-- ── Pied du drawer ────────────────────────────────────────────────────── -->
+  @if (cart.items().length > 0) {
+    <footer class="drawer__footer">
+      <!-- Sous-total -->
+      <div class="drawer__total">
+        <span class="drawer__total-label">Total</span>
+        <span class="drawer__total-amount">{{ formatPrice(cart.total()) }}</span>
+      </div>
+
+      <p class="drawer__tax-note">Taxes et frais calculés à la commande</p>
+
+      <!-- CTA principal -->
+      <button
+        class="btn btn--primary btn--full"
+        (click)="checkout()"
+        type="button"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"/>
+          <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z"/>
+          <path d="M9 12h6"/><path d="M9 16h6"/>
+        </svg>
+        Passer la commande
+      </button>
+
+      <!-- CTA secondaire -->
+      <button
+        class="btn btn--ghost btn--full"
+        (click)="cart.closeDrawer()"
+        type="button"
+      >
+        Continuer mes achats
+      </button>
+    </footer>
+  }
+</aside>
