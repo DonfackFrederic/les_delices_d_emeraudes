@@ -1,10 +1,11 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { CartIconComponent } from "./cart-icon/cart-icon";
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink],
+  imports: [RouterLink, CartIconComponent],
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })
