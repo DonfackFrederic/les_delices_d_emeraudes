@@ -1,0 +1,228 @@
+.checkout {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+.checkout__header {
+  margin-bottom: 36px;
+}
+
+.checkout__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  color: var(--light-text);
+  text-decoration: none;
+  margin-bottom: 12px;
+  transition: color 0.2s;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+}
+
+.checkout__title {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--dark-color);
+  margin: 0;
+}
+
+.checkout__empty {
+  text-align: center;
+  padding: 64px 24px;
+  color: var(--light-text);
+
+  p { margin-bottom: 24px; }
+}
+
+.checkout__layout {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 48px;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+
+    // Sur mobile, le récap passe en premier (plus intuitif)
+    .checkout__summary-section { order: -1; }
+  }
+}
+
+/* ── Formulaire ── */
+
+.checkout__form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.form-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-legend {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--dark-color);
+  margin-bottom: 8px;
+  padding: 0;
+  width: 100%;
+  border-bottom: 1.5px solid var(--gray-color);
+  padding-bottom: 10px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.field-required {
+  color: #c0392b;
+  margin-left: 2px;
+}
+
+.field-optional {
+  font-weight: 400;
+  color: var(--light-text);
+  font-size: 0.8rem;
+  margin-left: 4px;
+}
+
+.field-input {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  color: var(--text-color);
+  background: white;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  padding: 11px 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+
+  &::placeholder { color: #aaa; }
+
+  &:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.12);
+  }
+
+  &--error {
+    border-color: #c0392b;
+    &:focus { box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12); }
+  }
+}
+
+.field-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.field-error {
+  font-size: 0.8rem;
+  color: #c0392b;
+  margin: 0;
+}
+
+/* ── Erreur globale ── */
+
+.checkout__error {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 0.9rem;
+  color: #b91c1c;
+  line-height: 1.4;
+
+  svg { flex-shrink: 0; }
+}
+
+/* ── Bouton ── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.1s, opacity 0.2s;
+
+  &:active:not(:disabled) { transform: scale(0.99); }
+
+  &--primary {
+    background: var(--primary-color);
+    color: white;
+    &:hover:not(:disabled) { background: #00695c; }
+  }
+
+  &--lg { padding: 15px 28px; font-size: 1rem; }
+  &--full { width: 100%; }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn__spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.checkout__terms {
+  font-size: 0.78rem;
+  color: var(--light-text);
+  text-align: center;
+  margin: 0;
+
+  a {
+    color: var(--primary-color);
+    text-decoration: underline;
+  }
+}

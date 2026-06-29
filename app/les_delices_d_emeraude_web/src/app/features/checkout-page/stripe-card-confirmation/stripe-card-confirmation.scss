@@ -1,0 +1,54 @@
+.stripe-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.stripe-card-element {
+  padding: 14px 16px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+  transition: border-color 0.2s ease;
+
+  &:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.12);
+    outline: none;
+  }
+
+  &--error {
+    border-color: #c0392b;
+
+    &:focus-within {
+      box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12);
+    }
+  }
+}
+
+.field-error {
+  font-size: 0.8rem;
+  color: #c0392b;
+  margin: 0;
+}
+
+.stripe-notice {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--light-text);
+  margin: 0;
+
+  svg {
+    flex-shrink: 0;
+    color: var(--secondary-color);
+  }
+}
