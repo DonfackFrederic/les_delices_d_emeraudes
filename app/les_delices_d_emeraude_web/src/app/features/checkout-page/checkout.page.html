@@ -1,0 +1,168 @@
+<div class="checkout">
+  <div class="checkout__header">
+    <a routerLink="/products" class="checkout__back">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M19 12H5M5 12l7-7M5 12l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Continuer mes achats
+    </a>
+    <h1 class="checkout__title">Finaliser la commande</h1>
+  </div>
+
+  @if (store.isEmpty()) {
+    <!-- Panier vide : ne devrait pas arriver si le routing est protégé,
+          mais on gère quand même proprement. -->
+    <div class="checkout__empty">
+      <p>Votre panier est vide.</p>
+      <a routerLink="/products" class="btn btn--primary">Voir la boutique</a>
+    </div>
+  } @else {
+    <div class="checkout__layout">
+      <!-- Colonne formulaire -->
+      <section class="checkout__form-section" aria-label="Informations de commande">
+        <form
+          class="checkout__form"
+          (ngSubmit)="store.submitOrder()"
+          #checkoutForm="ngForm"
+          novalidate
+        >
+          <fieldset class="form-fieldset">
+            <legend class="form-legend">Vos coordonnées</legend>
+
+            <div class="form-row">
+              <div class="form-field">
+                <label for="customerName" class="field-label">
+                  Nom complet <span class="field-required" aria-hidden="true">*</span>
+                </label>
+                <input
+                  id="customerName"
+                  type="text"
+                  class="field-input"
+                  [class.field-input--error]="nameInput.invalid && nameInput.touched"
+                  autocomplete="name"
+                  placeholder="Marie Tremblay"
+                  required
+                  minlength="2"
+                  maxlength="100"
+                  name="customerName"
+                  #nameInput="ngModel"
+                  [ngModel]="store.customerName()"
+                  (ngModelChange)="store.customerName.set($event)"
+                />
+                @if (nameInput.invalid && nameInput.touched) {
+                  <p class="field-error" role="alert">
+                    Entrez votre nom complet (2 caractères minimum).
+                  </p>
+                }
+              </div>
+
+              <div class="form-field">
+                <label for="customerEmail" class="field-label">
+                  Courriel <span class="field-required" aria-hidden="true">*</span>
+                </label>
+                <input
+                  id="customerEmail"
+                  type="email"
+                  class="field-input"
+                  [class.field-input--error]="emailInput.invalid && emailInput.touched"
+                  autocomplete="email"
+                  placeholder="marie@example.com"
+                  required
+                  email
+                  name="customerEmail"
+                  #emailInput="ngModel"
+                  [ngModel]="store.customerEmail()"
+                  (ngModelChange)="store.customerEmail.set($event)"
+                />
+                @if (emailInput.invalid && emailInput.touched) {
+                  <p class="field-error" role="alert">
+                    Entrez une adresse courriel valide.
+                  </p>
+                }
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label for="customerPhone" class="field-label">
+                Téléphone
+                <span class="field-optional">(facultatif)</span>
+              </label>
+              <input
+                id="customerPhone"
+                type="tel"
+                class="field-input"
+                autocomplete="tel"
+                placeholder="514 555-0100"
+                maxlength="30"
+                name="customerPhone"
+                [ngModel]="store.customerPhone()"
+                (ngModelChange)="store.customerPhone.set($event)"
+              />
+            </div>
+
+            <div class="form-field">
+              <label for="deliveryNotes" class="field-label">
+                Instructions spéciales
+                <span class="field-optional">(facultatif)</span>
+              </label>
+              <textarea
+                id="deliveryNotes"
+                class="field-input field-textarea"
+                placeholder="Allergies, occasion particulière, date souhaitée…"
+                maxlength="500"
+                rows="3"
+                name="deliveryNotes"
+                [ngModel]="store.deliveryNotes()"
+                (ngModelChange)="store.deliveryNotes.set($event)"
+              ></textarea>
+            </div>
+          </fieldset>
+
+          <fieldset class="form-fieldset">
+            <legend class="form-legend">Paiement</legend>
+            <app-stripe-card-confirmation />
+          </fieldset>
+
+          <!-- Erreur globale (prix incohérent, réseau, carte refusée) -->
+          @if (store.stripeError()) {
+            <div class="checkout__error" role="alert" aria-live="assertive">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              {{ store.stripeError() }}
+            </div>
+          }
+
+          <button
+            type="submit"
+            class="btn btn--primary btn--lg btn--full"
+            [disabled]="!store.canSubmit()"
+            [attr.aria-busy]="store.isSubmitting()"
+          >
+            @if (store.isSubmitting()) {
+              <span class="btn__spinner" aria-hidden="true"></span>
+              Traitement en cours…
+            } @else {
+              Confirmer et payer —
+              {{ store.total() | number: '1.2-2' }} $
+            }
+          </button>
+
+          <p class="checkout__terms">
+            En confirmant, vous acceptez nos
+            <a href="/conditions" target="_blank">conditions d'utilisation</a>.
+          </p>
+        </form>
+      </section>
+
+      <!-- Colonne récapitulatif -->
+      <aside class="checkout__summary-section" aria-label="Récapitulatif de commande">
+        <app-order-summary
+          [items]="store.items()"
+          [total]="store.total()"
+        />
+      </aside>
+    </div>
+  }
+</div>

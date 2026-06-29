@@ -9,6 +9,7 @@ export const routes: Routes = [
   { path: 'products', component: Productspage },
   { path: 'products/:slug', component: ProductDetailPage },
   { path: '', loadChildren: () => import('./features/auth/auth.route').then((m) => m.AUTH_ROUTES) },
+  { path: '', loadChildren: () => import('./features/checkout-page/checkout.routes').then((m) => m.CHECKOUT_ROUTES)},
   // { path: 'login', component: LoginPageComponent },
   // { path: 'register', component: RegisterPageComponent },
   // {

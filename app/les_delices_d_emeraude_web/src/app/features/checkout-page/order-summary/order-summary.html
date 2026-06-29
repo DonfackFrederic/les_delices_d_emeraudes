@@ -1,0 +1,57 @@
+<div class="summary">
+    <h2 class="summary__title">Votre commande</h2>
+
+    <ul class="summary__items" role="list">
+      @for (item of items(); track item.product.id + item.selectedOptions.length) {
+        <li class="summary__item">
+          <div class="summary__item-image">
+            @if (item.product.imageUrl) {
+              <img
+                [src]="item.product.imageUrl"
+                [alt]="item.product.name"
+                loading="lazy"
+              />
+            } @else {
+              <div class="summary__item-image--placeholder" aria-hidden="true">🍰</div>
+            }
+          </div>
+
+          <div class="summary__item-details">
+            <p class="summary__item-name">
+              {{ item.product.name }}
+              <span class="summary__item-qty">× {{ item.quantity }}</span>
+            </p>
+
+            @if (item.selectedOptions.length > 0) {
+              <ul class="summary__item-options" aria-label="Options choisies">
+                @for (opt of item.selectedOptions; track opt.optionId) {
+                  <li>{{ opt.optionName }} : {{ opt.value }}</li>
+                }
+              </ul>
+            }
+
+            @if (item.comment) {
+              <p class="summary__item-comment">
+                <em>Note : {{ item.comment }}</em>
+              </p>
+            }
+          </div>
+
+          <p class="summary__item-price">
+            {{ formattedPrice(item.lineTotal) }}
+          </p>
+        </li>
+      }
+    </ul>
+
+    <div class="summary__footer">
+      <div class="summary__total">
+        <span>Total</span>
+        <strong>
+          {{ formattedPrice(total()) }}
+        </strong>
+      </div>
+
+      <p class="summary__tax-note">Taxes incluses</p>
+    </div>
+  </div>

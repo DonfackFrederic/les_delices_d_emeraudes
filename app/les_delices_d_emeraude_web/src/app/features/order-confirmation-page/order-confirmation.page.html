@@ -1,0 +1,107 @@
+<div class="confirmation">
+  @switch (state()) {
+    @case ('loading') {
+      <div class="confirmation__loading" aria-live="polite" aria-label="Chargement de la confirmation">
+        <div class="spinner" aria-hidden="true"></div>
+        <p>Chargement de votre confirmation…</p>
+      </div>
+    }
+
+    @case ('error') {
+      <div class="confirmation__error">
+        <div class="confirmation__icon confirmation__icon--error" aria-hidden="true">✕</div>
+        <h1>Commande introuvable</h1>
+        <p>Nous n'avons pas trouvé votre commande. Si vous venez de payer, vérifiez votre courriel de confirmation.</p>
+        <a routerLink="/" class="btn btn--primary">Retour à l'accueil</a>
+      </div>
+    }
+
+    @case ('success') {
+      @if (order(); as o) {
+        <div class="confirmation__success">
+          <div class="confirmation__hero">
+            <div class="confirmation__icon" aria-hidden="true">🍰</div>
+            <h1 class="confirmation__heading">Merci pour votre commande !</h1>
+            <p class="confirmation__subheading">
+              Un courriel de confirmation a été envoyé à
+              <strong>{{ o.customerEmail }}</strong>.
+            </p>
+          </div>
+
+          <div class="confirmation__card">
+            <div class="confirmation__meta">
+              <div class="meta-item">
+                <span class="meta-label">Numéro de commande</span>
+                <strong class="meta-value meta-value--mono">
+                  #{{ o.id.slice(0, 8).toUpperCase() }}
+                </strong>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Date</span>
+                <strong class="meta-value">
+                  {{ o.createdAt | date: 'd MMMM yyyy' : undefined : 'fr-CA' }}
+                </strong>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Statut</span>
+                <span class="status-badge status-badge--confirmed">Confirmée</span>
+              </div>
+            </div>
+
+            <div class="confirmation__items">
+              <h2 class="section-title">Récapitulatif</h2>
+              <ul role="list" class="items-list">
+                @for (item of o.items; track item.id) {
+                  <li class="items-list__item">
+                    <div class="items-list__info">
+                      <p class="items-list__name">
+                        {{ item.productName }}
+                        <span class="items-list__qty">× {{ item.quantity }}</span>
+                      </p>
+                      @if (item.options.length > 0) {
+                        <ul class="items-list__options" aria-label="Options">
+                          @for (opt of item.options; track opt.optionName) {
+                            <li>{{ opt.optionName }} : {{ opt.value }}</li>
+                          }
+                        </ul>
+                      }
+                      @if (item.comment) {
+                        <p class="items-list__comment">Note : {{ item.comment }}</p>
+                      }
+                    </div>
+                    <p class="items-list__price">
+                      {{ formattedPrice(item.lineTotal) }}
+                    </p>
+                  </li>
+                }
+              </ul>
+
+              <div class="confirmation__total">
+                <span>Total payé</span>
+                <strong>
+                  {{ formattedPrice(o.totalPrice) }}
+                </strong>
+              </div>
+            </div>
+
+            @if (o.deliveryNotes) {
+              <div class="confirmation__notes">
+                <h2 class="section-title">Instructions spéciales</h2>
+                <p>{{ o.deliveryNotes }}</p>
+              </div>
+            }
+          </div>
+
+          <div class="confirmation__actions">
+            <a routerLink="/dashboard/orders" class="btn btn--secondary">
+              Voir mes commandes
+            </a>
+            <a routerLink="/products" class="btn btn--primary">
+              Continuer mes achats
+            </a>
+          </div>
+        </div>
+      }
+    }
+  }
+</div>
