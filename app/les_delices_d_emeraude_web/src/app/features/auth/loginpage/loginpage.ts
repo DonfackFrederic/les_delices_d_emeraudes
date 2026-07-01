@@ -1,11 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ToastService } from '../../../core/services/toast-service';
 
 @Component({
   selector: 'app-loginpage',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './loginpage.html',
   styleUrls: [
     "../styles/_auth-shared.scss",
@@ -17,6 +18,7 @@ export class Loginpage {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly toast = inject(ToastService)
  
   readonly currentYear = new Date().getFullYear();
   readonly isLoading = signal(false);
@@ -27,6 +29,13 @@ export class Loginpage {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
   });
+
+  constructor(){
+    const expired = this.route.snapshot.queryParamMap.get('sessionExpired');
+    if (expired) {
+      this.toast.info('Session expiré', 'Votre session a expiré. Veuillez vous reconnecter.');
+    }
+  }
  
   isFieldInvalid(field: 'email' | 'password'): boolean {
     const ctrl = this.form.get(field)!;
