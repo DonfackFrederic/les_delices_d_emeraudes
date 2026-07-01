@@ -1,0 +1,107 @@
+<div class="dashboard">
+  <!-- Sidebar desktop -->
+  <aside class="dashboard__sidebar" aria-label="Navigation du tableau de bord">
+    <div class="sidebar__brand">
+      <a routerLink="/home" class="sidebar__logo" aria-label="Retour à l'accueil">
+        🍰
+        <span>Les Délices</span>
+      </a>
+    </div>
+
+    <nav class="sidebar__nav">
+      <a
+        routerLink="orders"
+        routerLinkActive="sidebar__link--active"
+        class="sidebar__link"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <rect x="9" y="3" width="6" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+          <path d="M9 12h6M9 16h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Mes commandes
+      </a>
+
+      <a
+        routerLink="profile"
+        routerLinkActive="sidebar__link--active"
+        class="sidebar__link"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Mon profil
+      </a>
+    </nav>
+
+    <div class="sidebar__footer">
+      <div class="sidebar__user">
+        <div class="sidebar__avatar" aria-hidden="true">
+          {{ userInitials() }}
+        </div>
+        <div class="sidebar__user-info">
+          <p class="sidebar__user-name">{{ userDisplayName() }}</p>
+          <button
+            class="sidebar__signout"
+            (click)="signOut()"
+            type="button"
+          >
+            Déconnexion
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Contenu principal -->
+  <main class="dashboard__main">
+    <!-- Header mobile -->
+    <header class="dashboard__mobile-header">
+      <a routerLink="/home" class="sidebar__logo" aria-label="Retour à l'accueil">
+        🍰 <span>Les Délices</span>
+      </a>
+      <div class="sidebar__avatar sidebar__avatar--sm" aria-hidden="true">
+        {{ userInitials() }}
+      </div>
+    </header>
+
+    <div class="dashboard__content">
+      <router-outlet />
+    </div>
+
+    <!-- Bottom nav mobile -->
+    <nav class="dashboard__bottom-nav" aria-label="Navigation mobile">
+      <a
+        routerLink="orders"
+        routerLinkActive="bottom-nav__link--active"
+        class="bottom-nav__link"
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <rect x="9" y="3" width="6" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <span>Commandes</span>
+      </a>
+
+      <a
+        routerLink="profile"
+        routerLinkActive="bottom-nav__link--active"
+        class="bottom-nav__link"
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Profil</span>
+      </a>
+
+      <button class="bottom-nav__link" (click)="signOut()" type="button">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Quitter</span>
+      </button>
+    </nav>
+  </main>
+</div>
