@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { SupabaseModule } from '../supabase/supabase.module';
+import { EmailModule } from 'src/email/email.module';
 
 // Categories
 import { AdminCategoriesController } from './categories/admin-categories.controller';
@@ -26,7 +27,7 @@ import { AdminStatsService } from './stats/admin-stats.service';
 import { AdminStatsRepository } from './stats/admin-stats.repository';
 
 @Module({
-  imports: [SupabaseModule],
+  imports: [SupabaseModule, EmailModule],
   controllers: [
     AdminCategoriesController,
     AdminProductsController,
