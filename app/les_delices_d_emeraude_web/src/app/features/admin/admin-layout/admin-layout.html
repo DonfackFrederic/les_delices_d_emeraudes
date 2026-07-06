@@ -1,0 +1,66 @@
+<div class="admin">
+  <aside class="admin__sidebar" aria-label="Navigation admin">
+    <div class="sidebar__brand">
+      <a routerLink="/home" class="sidebar__logo">
+        🍰 <span>Admin</span>
+      </a>
+    </div>
+
+    <nav class="sidebar__nav">
+      @for (item of navItems; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="sidebar__link--active"
+          [routerLinkActiveOptions]="{ exact: item.path === '/admin' }"
+          class="sidebar__link"
+        >
+          <span class="sidebar__icon" aria-hidden="true">
+            @switch (item.icon) {
+              @case ('dashboard') {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="9" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="5" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="12" width="7" height="9" rx="1" stroke="currentColor" stroke-width="2"/><rect x="3" y="16" width="7" height="5" rx="1" stroke="currentColor" stroke-width="2"/></svg>
+              }
+              @case ('products') {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 7L12 3 4 7v10l8 4 8-4V7z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M4 7l8 4 8-4M12 11v10" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+              }
+              @case ('categories') {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              }
+              @case ('orders') {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" stroke="currentColor" stroke-width="2"/><rect x="9" y="3" width="6" height="4" rx="1" stroke="currentColor" stroke-width="2"/></svg>
+              }
+            }
+          </span>
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar__footer">
+      <a routerLink="/dashboard/orders" class="sidebar__link sidebar__link--muted">
+        ← Retour espace client
+      </a>
+      <button class="sidebar__signout" (click)="signOut()" type="button">
+        Déconnexion
+      </button>
+    </div>
+  </aside>
+
+  <main class="admin__main">
+    <header class="admin__header">
+      <nav aria-label="Fil d'Ariane" class="breadcrumb">
+        @for (crumb of breadcrumb(); track crumb; let last = $last) {
+          <span class="breadcrumb__item" [class.breadcrumb__item--current]="last">
+            {{ crumb }}
+          </span>
+          @if (!last) {
+            <span class="breadcrumb__sep" aria-hidden="true">/</span>
+          }
+        }
+      </nav>
+    </header>
+
+    <div class="admin__content">
+      <router-outlet />
+    </div>
+  </main>
+</div>

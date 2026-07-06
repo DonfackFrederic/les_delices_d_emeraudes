@@ -15,6 +15,11 @@ export class App {
   protected readonly title = signal('les_delices_d_emeraude_web');
   public isNotAuthRoute(): boolean {
     const path = typeof window !== 'undefined' ? window.location.pathname : '';
-    return !(path.includes('/login') || path.includes('/register') || path.includes('/order-confirmation'));
+    return !(path.includes('/login') 
+    || path.includes('/register') 
+    || path.includes('/order-confirmation')
+    || path.includes('/admin')
+    || path.includes('/dashboard')
+    );
   }
 }

@@ -9,6 +9,38 @@ import { CreateCategoryDto, UpdateCategoryDto } from '../../dto/category.dto';
 export class AdminCategoriesRepository {
   constructor(private readonly supabaseService: SupabaseService) {}
 
+  /**
+   * Toutes les catégories, actives ET inactives — contrairement au
+   * catalogue public (CategoriesRepository) qui filtre is_active = true.
+   * L'admin doit pouvoir voir/réactiver une catégorie désactivée.
+   */
+  async findAll(): Promise<{ data: Category[]; error: PostgrestError | null }> {
+    const { data, error } = await this.supabaseService
+      .getClient()
+      .from('categories')
+      .select('*')
+      .order('sort_order', { ascending: true });
+ 
+    if (error) return { data: [], error };
+    return { data: toCamel(data ?? []) as Category[], error: null };
+  }
+ 
+  async findById(id: string): Promise<{
+    data: Category | null;
+    error: PostgrestError | null;
+  }> {
+    const { data, error } = await this.supabaseService
+      .getClient()
+      .from('categories')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+ 
+    if (error) return { data: null, error };
+    if (!data) return { data: null, error: null };
+    return { data: toCamel(data) as Category, error: null };
+  }
+
   async create(dto: CreateCategoryDto): Promise<{
     data: Category | null;
     error: PostgrestError | null;

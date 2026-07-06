@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -19,6 +20,16 @@ import { Roles } from '../../auth/roles.decorator';
 @Roles('admin')
 export class AdminCategoriesController {
   constructor(private readonly service: AdminCategoriesService) {}
+
+  @Get()
+  findAll() {
+    return this.service.findAll();
+  }
+
+  @Get(':id')
+  findById(@Param('id', ParseUUIDPipe) id: string) {
+    return this.service.findById(id);
+  }
 
   @Post()
   create(@Body() dto: CreateCategoryDto) {

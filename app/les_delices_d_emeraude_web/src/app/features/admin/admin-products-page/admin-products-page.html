@@ -1,0 +1,112 @@
+<div class="page">
+  <header class="page__header">
+    <h1 class="page__title">Produits</h1>
+    <a routerLink="/admin/products/new" class="btn btn--primary">
+      + Nouveau produit
+    </a>
+  </header>
+
+  <div class="toolbar">
+    <input
+      type="search"
+      class="field-input"
+      placeholder="Rechercher un produit…"
+      [ngModel]="searchTerm()"
+      (ngModelChange)="searchTerm.set($event)"
+    />
+
+    <select
+      class="field-input field-input--narrow"
+      [ngModel]="sortKey()"
+      (ngModelChange)="sortKey.set($event)"
+    >
+      <option value="sortOrder">Trier par ordre</option>
+      <option value="name">Trier par nom</option>
+      <option value="basePrice">Trier par prix</option>
+    </select>
+  </div>
+
+  @if (productsResource.isLoading()) {
+    <div class="page__loading" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Chargement…</p>
+    </div>
+  } @else if (productsResource.error()) {
+    <div class="page__error" role="alert">
+      <p>Impossible de charger les produits.</p>
+      <button class="btn btn--secondary" (click)="productsResource.reload()">
+        Réessayer
+      </button>
+    </div>
+  } @else if (filteredProducts().length === 0) {
+    <div class="page__empty">
+      <p>Aucun produit ne correspond à votre recherche.</p>
+    </div>
+  } @else {
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col"></th>
+            <th scope="col">Nom</th>
+            <th scope="col">Catégorie</th>
+            <th scope="col">Prix</th>
+            <th scope="col">Statut</th>
+            <th scope="col"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (product of filteredProducts(); track product.id) {
+            <tr>
+              <td class="table__image-cell">
+                @if (product.imageUrl) {
+                  <img [src]="product.imageUrl" [alt]="product.name" class="table__thumb" />
+                } @else {
+                  <div class="table__thumb table__thumb--empty" aria-hidden="true">🍰</div>
+                }
+              </td>
+              <td class="table__name">
+                {{ product.name }}
+                @if (product.isFeatured) {
+                  <span class="featured-badge" title="Mis en avant">★</span>
+                }
+              </td>
+              <td>{{ product.category?.name ?? '—' }}</td>
+              <td class="table__price">{{ product.basePrice.toFixed(2) }} $</td>
+              <td>
+                <span
+                  class="status-badge"
+                  [class.status-badge--active]="product.isActive"
+                  [class.status-badge--inactive]="!product.isActive"
+                >
+                  {{ product.isActive ? 'Actif' : 'Inactif' }}
+                </span>
+              </td>
+              <td class="table__actions">
+                <a
+                  [routerLink]="['/admin/products', product.id, 'edit']"
+                  class="btn btn--ghost"
+                >
+                  Modifier
+                </a>
+                @if (product.isActive) {
+                  <button
+                    class="btn btn--ghost btn--danger"
+                    (click)="confirmDeactivate(product)"
+                    type="button"
+                  >
+                    Désactiver
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (actionError()) {
+    <div class="toast toast--error" role="alert">{{ actionError() }}</div>
+  }
+</div>

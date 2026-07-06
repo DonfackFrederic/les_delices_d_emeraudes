@@ -15,11 +15,6 @@ export const routes: Routes = [
     canActivate: [authGuard], 
     loadChildren: () => import('./features/dashboard/dashboard.routes').then((m) => m.DASHBOARD_ROUTES)
   },
-  // {
-  //   path: 'admin',
-  //   canActivate: [AdminGuard],
-  //   component: AdminLayoutComponent,
-  //   children: [ /* Sprint 3 */ ]
-  // },
+  { path: '', loadChildren: () => import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES) },
   { path: '**', redirectTo: 'home' }
 ];

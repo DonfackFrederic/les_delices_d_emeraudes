@@ -1,0 +1,44 @@
+<div class="chart">
+  <div class="chart__header">
+    <h3 class="chart__title">Commandes — 30 derniers jours</h3>
+    <p class="chart__total">
+      {{ totalRevenue() | number: '1.2-2' }} $ au total
+    </p>
+  </div>
+
+  <svg
+    [attr.viewBox]="'0 0 ' + svgWidth() + ' ' + (chartHeight + 24)"
+    class="chart__svg"
+    role="img"
+    [attr.aria-label]="'Graphique des revenus des 30 derniers jours, total ' + totalRevenue() + ' dollars'"
+  >
+    @for (bar of bars(); track bar.date) {
+      <g class="chart__bar-group">
+        <rect
+          [attr.x]="bar.x"
+          [attr.y]="bar.y"
+          [attr.width]="bar.width"
+          [attr.height]="bar.height"
+          [attr.rx]="2"
+          [class]="bar.isToday ? 'chart__bar chart__bar--today' : 'chart__bar'"
+        >
+          <title>{{ bar.date }} — {{ bar.count }} commande(s), {{ bar.revenue.toFixed(2) }} $</title>
+        </rect>
+      </g>
+    }
+
+    <!-- Ligne de base -->
+    <line
+      [attr.x1]="0"
+      [attr.y1]="chartHeight"
+      [attr.x2]="svgWidth()"
+      [attr.y2]="chartHeight"
+      class="chart__baseline"
+    />
+  </svg>
+
+  <div class="chart__legend">
+    <span>{{ firstDate() }}</span>
+    <span>{{ lastDate() }}</span>
+  </div>
+</div>

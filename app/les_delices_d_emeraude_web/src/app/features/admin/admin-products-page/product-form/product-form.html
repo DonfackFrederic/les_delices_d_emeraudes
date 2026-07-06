@@ -1,0 +1,199 @@
+<div class="page">
+  <a routerLink="/admin/products" class="page__back">← Produits</a>
+
+  <h1 class="page__title">
+    {{ store.isEditMode() ? 'Modifier le produit' : 'Nouveau produit' }}
+  </h1>
+
+  <div class="tabs" role="tablist">
+    <button
+      role="tab"
+      class="tabs__tab"
+      [class.tabs__tab--active]="store.activeTab() === 'info'"
+      (click)="store.activeTab.set('info')"
+      type="button"
+    >
+      Informations
+    </button>
+    <button
+      role="tab"
+      class="tabs__tab"
+      [class.tabs__tab--active]="store.activeTab() === 'images'"
+      [disabled]="!store.canAccessSecondaryTabs()"
+      (click)="store.activeTab.set('images')"
+      type="button"
+      [title]="!store.canAccessSecondaryTabs() ? 'Enregistrez d\'abord les informations de base' : ''"
+    >
+      Images
+    </button>
+    <button
+      role="tab"
+      class="tabs__tab"
+      [class.tabs__tab--active]="store.activeTab() === 'options'"
+      [disabled]="!store.canAccessSecondaryTabs()"
+      (click)="store.activeTab.set('options')"
+      type="button"
+      [title]="!store.canAccessSecondaryTabs() ? 'Enregistrez d\'abord les informations de base' : ''"
+    >
+      Options de personnalisation
+    </button>
+  </div>
+
+  <!-- ── Onglet Informations ────────────────────────────────────────── -->
+  @if (store.activeTab() === 'info') {
+    <form class="tab-panel" (ngSubmit)="store.saveBasicInfo()" #form="ngForm">
+      <div class="form-field">
+        <label for="name" class="field-label">
+          Nom <span class="field-required">*</span>
+        </label>
+        <input
+          id="name"
+          type="text"
+          class="field-input"
+          name="name"
+          required
+          minlength="2"
+          maxlength="200"
+          [ngModel]="store.name()"
+          (ngModelChange)="store.onNameChange($event)"
+        />
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label for="slug" class="field-label">
+            Slug <span class="field-required">*</span>
+          </label>
+          <input
+            id="slug"
+            type="text"
+            class="field-input"
+            name="slug"
+            required
+            pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            [ngModel]="store.slug()"
+            (ngModelChange)="store.slug.set($event)"
+            (input)="store.onSlugManualEdit()"
+          />
+        </div>
+
+        <div class="form-field">
+          <label for="categoryId" class="field-label">
+            Catégorie <span class="field-required">*</span>
+          </label>
+          <select
+            id="categoryId"
+            class="field-input"
+            name="categoryId"
+            required
+            [ngModel]="store.categoryId()"
+            (ngModelChange)="store.categoryId.set($event)"
+          >
+            <option value="" disabled>Choisir…</option>
+            @for (cat of categoriesResource.value(); track cat.id) {
+              <option [value]="cat.id">{{ cat.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="basePrice" class="field-label">
+          Prix de base ($) <span class="field-required">*</span>
+        </label>
+        <input
+          id="basePrice"
+          type="number"
+          step="0.01"
+          min="0"
+          class="field-input field-input--narrow"
+          name="basePrice"
+          required
+          [ngModel]="store.basePrice()"
+          (ngModelChange)="store.basePrice.set($event)"
+        />
+      </div>
+
+      <div class="form-field">
+        <label for="description" class="field-label">Description</label>
+        <textarea
+          id="description"
+          class="field-input field-textarea"
+          name="description"
+          maxlength="2000"
+          rows="4"
+          [ngModel]="store.description()"
+          (ngModelChange)="store.description.set($event)"
+        ></textarea>
+      </div>
+
+      <div class="form-checks">
+        <label class="checkbox-field">
+          <input
+            type="checkbox"
+            name="isActive"
+            [ngModel]="store.isActive()"
+            (ngModelChange)="store.isActive.set($event)"
+          />
+          Actif
+        </label>
+        <label class="checkbox-field">
+          <input
+            type="checkbox"
+            name="isFeatured"
+            [ngModel]="store.isFeatured()"
+            (ngModelChange)="store.isFeatured.set($event)"
+          />
+          Mis en avant
+        </label>
+      </div>
+
+      @if (store.saveError()) {
+        <div class="form-error" role="alert">{{ store.saveError() }}</div>
+      }
+
+      @if (store.saveSuccess()) {
+        <div class="form-success" role="status">Enregistré avec succès.</div>
+      }
+
+      <button
+        type="submit"
+        class="btn btn--primary"
+        [disabled]="form.invalid || store.isSaving()"
+      >
+        @if (store.isSaving()) {
+          <span class="spinner" aria-hidden="true"></span>
+          Sauvegarde…
+        } @else {
+          {{ store.isEditMode() ? 'Enregistrer' : 'Créer le produit' }}
+        }
+      </button>
+    </form>
+  }
+
+  <!-- ── Onglet Images ──────────────────────────────────────────────── -->
+  @if (store.activeTab() === 'images' && store.productId(); as productId) {
+    <div class="tab-panel">
+      <app-image-upload
+        label="Image principale"
+        folder="products"
+        [entityId]="productId"
+        [value]="store.imageUrl()"
+        (valueChange)="onMainImageChange($event)"
+      />
+    </div>
+  }
+
+  <!-- ── Onglet Options ─────────────────────────────────────────────── -->
+  @if (store.activeTab() === 'options' && store.productId(); as productId) {
+    <div class="tab-panel">
+      @if (store.product(); as product) {
+        <app-option-editor
+          [productId]="productId"
+          [options]="product.options"
+          (changed)="store.productResource.reload()"
+        />
+      }
+    </div>
+  }
+</div>

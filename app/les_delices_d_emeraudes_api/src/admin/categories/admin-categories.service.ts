@@ -14,6 +14,30 @@ export class AdminCategoriesService {
 
   constructor(private readonly repository: AdminCategoriesRepository) {}
 
+  async findAll() {
+    const { data, error } = await this.repository.findAll();
+ 
+    if (error) {
+      this.logger.error('Erreur lecture catégories admin', error);
+      throw new InternalServerErrorException('Impossible de récupérer les catégories.');
+    }
+ 
+    return data;
+  }
+ 
+  async findById(id: string) {
+    const { data, error } = await this.repository.findById(id);
+ 
+    if (error) {
+      this.logger.error(`Erreur lecture catégorie ${id}`, error);
+      throw new InternalServerErrorException('Impossible de récupérer la catégorie.');
+    }
+ 
+    if (!data) throw new NotFoundException('Catégorie introuvable.');
+ 
+    return data;
+  }
+
   async create(dto: CreateCategoryDto) {
     const { data, error } = await this.repository.create(dto);
 
