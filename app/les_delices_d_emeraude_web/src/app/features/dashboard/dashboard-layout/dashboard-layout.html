@@ -3,8 +3,7 @@
   <aside class="dashboard__sidebar" aria-label="Navigation du tableau de bord">
     <div class="sidebar__brand">
       <a routerLink="/home" class="sidebar__logo" aria-label="Retour à l'accueil">
-        🍰
-        <span>Les Délices</span>
+        <img src="logo.png" alt="Les Délices d'Émeraude">
       </a>
     </div>
 
@@ -33,6 +32,14 @@
         </svg>
         Mon profil
       </a>
+      @if (isAdmin()) {
+        <a routerLink="/admin" class="sidebar__link sidebar__link--admin">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
+          Espace admin
+        </a>
+      }
     </nav>
 
     <div class="sidebar__footer">
@@ -95,6 +102,14 @@
         </svg>
         <span>Profil</span>
       </a>
+      @if (isAdmin()) {
+        <a routerLink="/admin" class="bottom-nav__link">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
+          <span>Admin</span>
+        </a>
+      }
 
       <button class="bottom-nav__link" (click)="signOut()" type="button">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">

@@ -3,6 +3,7 @@ import {
   Injectable,
   Logger,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { UpdateProfileDto } from 'src/dto/update-profile.dto';
@@ -59,6 +60,21 @@ export class UsersService {
       throw new InternalServerErrorException('Impossible de mettre à jour le profil.');
     }
 
+    return data;
+  }
+
+  async getMyProfile(userId: string) {
+    const { data, error } = await this.usersRepository.findProfileById(userId);
+  
+    if (error) {
+      this.logger.error(`Erreur lecture profil userId=${userId}`, error);
+      throw new InternalServerErrorException('Impossible de récupérer le profil.');
+    }
+  
+    if (!data) {
+      throw new NotFoundException('Profil introuvable.');
+    }
+  
     return data;
   }
 }

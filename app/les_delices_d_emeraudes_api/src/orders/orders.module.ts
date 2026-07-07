@@ -5,9 +5,10 @@ import { OrdersService } from './orders.service';
 import { OrdersRepository } from './orders.repository';
 import { SupabaseModule } from '../supabase/supabase.module';
 import { StripeModule } from '../stripe/stripe.module';
+import { EmailModule } from 'src/email/email.module';
 
 @Module({
-  imports: [SupabaseModule, StripeModule],
+  imports: [SupabaseModule, StripeModule, EmailModule],
   controllers: [OrdersController, StripeWebhookController],
   providers: [OrdersService, OrdersRepository],
   exports: [OrdersService],

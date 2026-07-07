@@ -1,0 +1,116 @@
+<div class="panel-backdrop" (click)="closed.emit()">
+  <div
+    class="panel"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Détail de la commande"
+    (click)="$event.stopPropagation()"
+  >
+    <header class="panel__header">
+      <div>
+        <h2 class="panel__title">
+          Commande #{{ order().id.slice(0, 8).toUpperCase() }}
+        </h2>
+        <p class="panel__date">
+          {{ formatDate(order().createdAt) }}
+        </p>
+      </div>
+      <button class="panel__close" (click)="closed.emit()" type="button" aria-label="Fermer">
+        ✕
+      </button>
+    </header>
+
+    <div class="panel__body">
+      <!-- Infos client -->
+      <section class="panel__section">
+        <h3 class="section-title">Client</h3>
+        <p class="info-line"><strong>{{ order().customerName }}</strong></p>
+        <p class="info-line">{{ order().customerEmail }}</p>
+        @if (order().customerPhone) {
+          <p class="info-line">{{ order().customerPhone }}</p>
+        }
+      </section>
+
+      <!-- Changement de statut -->
+      <section class="panel__section">
+        <h3 class="section-title">Statut</h3>
+        <div class="status-row">
+          <select
+            class="field-input"
+            [ngModel]="pendingStatus()"
+            (ngModelChange)="pendingStatus.set($event)"
+          >
+            @for (opt of statusOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+
+          <button
+            class="btn btn--primary"
+            type="button"
+            [disabled]="pendingStatus() === order().status || isUpdating()"
+            (click)="confirmStatusChange()"
+          >
+            @if (isUpdating()) {
+              <span class="spinner" aria-hidden="true"></span>
+            }
+            Appliquer
+          </button>
+        </div>
+
+        @if (updateError()) {
+          <p class="field-error">{{ updateError() }}</p>
+        }
+      </section>
+
+      <!-- Items -->
+      <section class="panel__section">
+        <h3 class="section-title">Articles</h3>
+        <ul class="items-list">
+          @for (item of order().items; track item.id) {
+            <li class="item">
+              <div class="item__image">
+                @if (item.productImageUrl) {
+                  <img [src]="item.productImageUrl" [alt]="item.productName" />
+                } @else {
+                  <span aria-hidden="true">🍰</span>
+                }
+              </div>
+              <div class="item__details">
+                <p class="item__name">
+                  {{ item.productName }}
+                  <span class="item__qty">× {{ item.quantity }}</span>
+                </p>
+                @if (item.options.length > 0) {
+                  <ul class="item__options">
+                    @for (opt of item.options; track opt.optionName) {
+                      <li>{{ opt.optionName }} : {{ opt.value }}</li>
+                    }
+                  </ul>
+                }
+                @if (item.comment) {
+                  <p class="item__comment item__comment--highlight">
+                    💬 {{ item.comment }}
+                  </p>
+                }
+              </div>
+              <p class="item__price">{{ item.lineTotal.toFixed(2) }} $</p>
+            </li>
+          }
+        </ul>
+
+        <div class="total-row">
+          <span>Total</span>
+          <strong>{{ order().totalPrice.toFixed(2) }} $</strong>
+        </div>
+      </section>
+
+      @if (order().deliveryNotes) {
+        <section class="panel__section">
+          <h3 class="section-title">Instructions spéciales</h3>
+          <p class="info-line">{{ order().deliveryNotes }}</p>
+        </section>
+      }
+    </div>
+  </div>
+</div>

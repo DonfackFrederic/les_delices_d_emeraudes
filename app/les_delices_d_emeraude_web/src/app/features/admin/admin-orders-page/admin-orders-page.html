@@ -1,0 +1,85 @@
+<div class="page">
+  <h1 class="page__title">Commandes</h1>
+
+  <div class="tabs" role="tablist">
+    @for (tab of tabs; track tab.value) {
+      <button
+        role="tab"
+        class="tabs__tab"
+        [class.tabs__tab--active]="activeFilter() === tab.value"
+        (click)="activeFilter.set(tab.value)"
+        type="button"
+      >
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  @if (ordersResource.isLoading()) {
+    <div class="page__loading" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Chargement…</p>
+    </div>
+  } @else if (ordersResource.error()) {
+    <div class="page__error" role="alert">
+      <p>Impossible de charger les commandes.</p>
+      <button class="btn btn--secondary" (click)="ordersResource.reload()">
+        Réessayer
+      </button>
+    </div>
+  } @else if (orders().length === 0) {
+    <div class="page__empty">
+      <p>Aucune commande dans cette catégorie.</p>
+    </div>
+  } @else {
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Commande</th>
+            <th scope="col">Client</th>
+            <th scope="col">Date</th>
+            <th scope="col">Total</th>
+            <th scope="col">Statut</th>
+            <th scope="col"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of orders(); track order.id) {
+            <tr>
+              <td class="table__id">#{{ order.id.slice(0, 8).toUpperCase() }}</td>
+              <td>
+                <p class="table__customer-name">{{ order.customerName }}</p>
+                <p class="table__customer-email">{{ order.customerEmail }}</p>
+              </td>
+              <td>{{ formatDate(order.createdAt) }}</td>
+              <td class="table__total">{{ order.totalPrice.toFixed(2) }} $</td>
+              <td>
+                <span class="status-badge" [class]="'status-badge--' + order.status">
+                  {{ statusLabel(order.status) }}
+                </span>
+              </td>
+              <td>
+                <button
+                  class="btn btn--ghost"
+                  (click)="selectedOrder.set(order)"
+                  type="button"
+                >
+                  Voir détail
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (selectedOrder(); as order) {
+    <app-order-detail-panel
+      [order]="order"
+      (statusChanged)="onStatusChanged()"
+      (closed)="selectedOrder.set(null)"
+    />
+  }
+</div>

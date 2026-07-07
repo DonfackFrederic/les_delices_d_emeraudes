@@ -1,0 +1,46 @@
+<div class="page">
+  <h1 class="page__title">Tableau de bord</h1>
+
+  @if (statsResource.isLoading()) {
+    <div class="page__loading" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Chargement des statistiques…</p>
+    </div>
+  } @else if (statsResource.error()) {
+    <div class="page__error" role="alert">
+      <p>Impossible de charger les statistiques.</p>
+      <button class="btn btn--secondary" (click)="statsResource.reload()">
+        Réessayer
+      </button>
+    </div>
+  } @else if (statsResource.value(); as stats) {
+    <div class="kpi-grid">
+      <app-kpi-card
+        label="Commandes aujourd'hui"
+        [value]="stats.todayOrders.toString()"
+        icon="🛒"
+        iconBackground="rgba(0, 168, 107, 0.1)"
+      />
+      <app-kpi-card
+        label="Revenus du mois"
+        [value]="formatCurrency(stats.monthRevenue)"
+        icon="💰"
+        iconBackground="rgba(0, 77, 64, 0.08)"
+      />
+      <app-kpi-card
+        label="Produits actifs"
+        [value]="stats.activeProducts.toString()"
+        icon="🍰"
+        iconBackground="rgba(255, 152, 0, 0.1)"
+      />
+      <app-kpi-card
+        label="Commandes en attente"
+        [value]="stats.pendingOrders.toString()"
+        icon="⏳"
+        iconBackground="rgba(220, 38, 38, 0.08)"
+      />
+    </div>
+
+    <app-revenue-chart [data]="stats.last30DaysChart" />
+  }
+</div>

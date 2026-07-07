@@ -30,15 +30,9 @@
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
-.sidebar__logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-serif);
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: white;
-  text-decoration: none;
+.sidebar__logo img {
+  height: 50px;
+  width: auto;
 }
 
 .sidebar__nav {
@@ -70,6 +64,15 @@
   &--active {
     background: var(--primary-color);
     color: white;
+  }
+}
+
+.sidebar__link--admin {
+  color: #fbbf24;
+ 
+  &:hover {
+    background: rgba(251, 191, 36, 0.1);
+    color: #fbbf24;
   }
 }
 

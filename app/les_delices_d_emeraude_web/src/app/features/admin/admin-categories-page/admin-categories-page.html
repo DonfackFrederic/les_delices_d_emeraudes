@@ -1,0 +1,92 @@
+<div class="page">
+  <header class="page__header">
+    <h1 class="page__title">Catégories</h1>
+    <button class="btn btn--primary" (click)="openCreateModal()" type="button">
+      + Nouvelle catégorie
+    </button>
+  </header>
+
+  @if (categoriesResource.isLoading()) {
+    <div class="page__loading" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Chargement…</p>
+    </div>
+  } @else if (categoriesResource.error()) {
+    <div class="page__error" role="alert">
+      <p>Impossible de charger les catégories.</p>
+      <button class="btn btn--secondary" (click)="categoriesResource.reload()">
+        Réessayer
+      </button>
+    </div>
+  } @else if (categories()?.length === 0) {
+    <div class="page__empty">
+      <p>Aucune catégorie pour l'instant.</p>
+    </div>
+  } @else {
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col"></th>
+            <th scope="col">Nom</th>
+            <th scope="col">Slug</th>
+            <th scope="col">Ordre</th>
+            <th scope="col">Statut</th>
+            <th scope="col"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (cat of categories(); track cat.id) {
+            <tr>
+              <td class="table__image-cell">
+                @if (cat.imageUrl) {
+                  <img [src]="cat.imageUrl" [alt]="cat.name" class="table__thumb" />
+                } @else {
+                  <div class="table__thumb table__thumb--empty" aria-hidden="true">🍰</div>
+                }
+              </td>
+              <td class="table__name">{{ cat.name }}</td>
+              <td class="table__slug">{{ cat.slug }}</td>
+              <td>{{ cat.sortOrder }}</td>
+              <td>
+                <span
+                  class="status-badge"
+                  [class.status-badge--active]="cat.isActive"
+                  [class.status-badge--inactive]="!cat.isActive"
+                >
+                  {{ cat.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td class="table__actions">
+                <button class="btn btn--ghost" (click)="openEditModal(cat)" type="button">
+                  Modifier
+                </button>
+                <button
+                  class="btn btn--ghost btn--danger"
+                  (click)="confirmDelete(cat)"
+                  type="button"
+                >
+                  Supprimer
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (deleteError()) {
+    <div class="toast toast--error" role="alert">
+      {{ deleteError() }}
+    </div>
+  }
+
+  @if (isModalOpen()) {
+    <app-category-form-modal
+      [category]="editingCategory()"
+      (saved)="onSaved()"
+      (closed)="closeModal()"
+    />
+  }
+</div>

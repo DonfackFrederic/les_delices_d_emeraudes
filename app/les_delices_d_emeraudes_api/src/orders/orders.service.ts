@@ -10,6 +10,7 @@ import { CreateOrderDto } from 'src/dto/create-order.dto';
 import { CreateOrderItemDto } from 'src/dto/create-order-item.dto';
 import { CreateOrderIntentResponse } from '@shared/types';
 import { CalculatedOrder, CalculatedOrderItem, PricingProduct } from 'src/types/orders.types';
+import { EmailService } from 'src/email/email.service';
 
 const PRICE_TOLERANCE = 0.01; // écart maximal toléré en $ (cf. ADR-004)
 
@@ -21,6 +22,7 @@ export class OrdersService {
     private readonly ordersRepository: OrdersRepository,
     private readonly stripeService: StripeService,
     private readonly configService: ConfigService,
+    private readonly emailService: EmailService,
   ) {}
 
   /**
@@ -203,7 +205,7 @@ export class OrdersService {
     const { data: order, error } = await this.ordersRepository.markAsPaid(
       stripePaymentIntentId,
     );
-
+  
     if (error) {
       this.logger.error(
         `Échec markOrderAsPaid pour PaymentIntent ${stripePaymentIntentId}`,
@@ -211,15 +213,22 @@ export class OrdersService {
       );
       return null;
     }
-
+  
     if (!order) {
       this.logger.warn(
         `Aucune commande trouvée pour PaymentIntent ${stripePaymentIntentId}`,
       );
       return null;
     }
-
+  
     this.logger.log(`Commande ${order.id} marquée comme payée`);
+  
+    // Envoi de l'email de confirmation — ne bloque jamais le flux principal.
+    // EmailService gère déjà ses propres erreurs en interne (log + silence),
+    // mais on ne l'attend pas non plus (fire-and-forget) pour ne pas retarder
+    // la réponse au webhook Stripe, qui doit rester rapide.
+    void this.emailService.sendOrderConfirmation(order);
+  
     return order;
   }
 

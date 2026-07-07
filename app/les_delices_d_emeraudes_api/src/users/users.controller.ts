@@ -38,4 +38,9 @@ export class UsersController {
   ) {
     return this.usersService.updateProfile(user.id, dto);
   }
+
+  @Get('profile')
+  getMyProfile(@CurrentUser() user: AuthenticatedUser) {
+    return this.usersService.getMyProfile(user.id);
+  }
 }

@@ -14,7 +14,11 @@ export function toCamel(obj: any): any {
   const newObj: any = {};
   for (const key in obj) {
     const camelKey = key.indexOf('_') > -1
-      ? key.replace(/_([a-z])/g, (_, c) => c.toUpperCase())
+      ? key.replace(/_([0-9a-zA-Z])/g, (_, c) => {
+          // if the captured char is a digit, keep it as-is (remove underscore);
+          // if it's a letter, uppercase it to form camelCase.
+          return /[0-9]/.test(c) ? c : c.toUpperCase();
+        })
       : key;
 
     newObj[camelKey] = toCamel(obj[key]);
@@ -35,6 +39,7 @@ export function toSnake(obj: any): any {
   const newObj: any = {};
 
   for (const key in obj) {
+    // Preserve digits and insert underscores before uppercase letters.
     const snakeKey = key.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
     newObj[snakeKey] = toSnake(obj[key]);
   }
