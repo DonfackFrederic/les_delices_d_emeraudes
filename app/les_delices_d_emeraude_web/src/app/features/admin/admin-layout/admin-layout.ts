@@ -2,6 +2,7 @@ import {
   Component,
   computed,
   inject,
+  signal,
 } from '@angular/core';
 import {
   NavigationEnd,
@@ -10,7 +11,7 @@ import {
   RouterLinkActive,
   RouterOutlet,
 } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -39,10 +40,6 @@ export class AdminLayout {
  
   protected readonly navItems = NAV_ITEMS;
  
-  /**
-   * Breadcrumb dérivé de l'URL active, recalculé à chaque navigation.
-   * toSignal transforme le flux router.events en signal réactif.
-   */
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
       filter((e) => e instanceof NavigationEnd),
@@ -58,9 +55,32 @@ export class AdminLayout {
       .filter((s) => !this.isUuidLike(s));
  
     if (segments.length === 0) return ['Admin'];
- 
     return segments.map((s) => this.humanize(s));
   });
+ 
+  // ── Menu hamburger mobile ──────────────────────────────────────────────
+ 
+  protected readonly isMobileMenuOpen = signal(false);
+ 
+  constructor() {
+    // Ferme le menu à chaque navigation, quelle que soit son origine
+    // (clic sur un lien, navigation programmatique, retour navigateur).
+    this.router.events
+      .pipe(takeUntilDestroyed())
+      .subscribe((event) => {
+        if (event instanceof NavigationEnd) {
+          this.isMobileMenuOpen.set(false);
+        }
+      });
+  }
+ 
+  protected toggleMobileMenu(): void {
+    this.isMobileMenuOpen.update((open) => !open);
+  }
+ 
+  protected closeMobileMenu(): void {
+    this.isMobileMenuOpen.set(false);
+  }
  
   protected async signOut(): Promise<void> {
     await this.authService.signOut();
@@ -81,5 +101,15 @@ export class AdminLayout {
       edit: 'Modifier',
     };
     return labels[segment] ?? segment.charAt(0).toUpperCase() + segment.slice(1);
+  }
+ 
+  protected getIcon(icon: string): string {
+    const icons: Record<string, string> = {
+      dashboard: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="9" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="5" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="12" width="7" height="9" rx="1" stroke="currentColor" stroke-width="2"/><rect x="3" y="16" width="7" height="5" rx="1" stroke="currentColor" stroke-width="2"/></svg>',
+      products: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 7L12 3 4 7v10l8 4 8-4V7z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M4 7l8 4 8-4M12 11v10" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
+      categories: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+      orders: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" stroke="currentColor" stroke-width="2"/><rect x="9" y="3" width="6" height="4" rx="1" stroke="currentColor" stroke-width="2"/></svg>',
+    };
+    return icons[icon] ?? '';
   }
 }
