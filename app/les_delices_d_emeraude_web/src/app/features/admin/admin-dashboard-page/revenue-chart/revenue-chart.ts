@@ -30,27 +30,31 @@ export class RevenueChart {
   protected readonly chartHeight = CHART_HEIGHT;
  
   private readonly maxRevenue = computed(() => {
-    const max = Math.max(...this.data().map((d) => d.revenue), 1);
+    const data = this.data() || [];
+    const max = Math.max(...data.map((d) => d.revenue), 1);
     return max;
   });
  
-  protected readonly svgWidth = computed(() => this.data().length * 14);
+  protected readonly svgWidth = computed(() => (this.data() || []).length * 14);
  
   protected readonly totalRevenue = computed(() =>
-    this.data().reduce((sum, d) => sum + d.revenue, 0),
+    (this.data() || []).reduce((sum, d) => sum + d.revenue, 0),
   );
  
   protected readonly firstDate = computed(() =>
-    this.formatShortDate(this.data()[0]?.date),
+    this.formatShortDate((this.data() || [])[0]?.date),
   );
  
   protected readonly lastDate = computed(() =>
-    this.formatShortDate(this.data()[this.data().length - 1]?.date),
+    (() => {
+      const data = this.data() || [];
+      return this.formatShortDate(data[data.length - 1]?.date);
+    })(),
   );
  
   protected readonly bars = computed<ChartBar[]>(() => {
-    const points = this.data();
-    const max = this.maxRevenue();
+    const points = this.data() || [];
+    const max = Math.max(this.maxRevenue(), 1);
     const barWidth = 14 - BAR_GAP;
     const today = new Date().toISOString().slice(0, 10);
  

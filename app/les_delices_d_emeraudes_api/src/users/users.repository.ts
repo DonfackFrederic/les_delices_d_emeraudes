@@ -109,4 +109,20 @@ export class UsersRepository {
 
     return { data: toCamel(data) as User, error: null };
   }
+  async findProfileById(userId: string): Promise<{
+    data: User | null;
+    error: PostgrestError | null;
+  }> {
+    const { data, error } = await this.supabaseService
+      .getClient()
+      .from('users')
+      .select('id, email, full_name, phone, role, created_at, updated_at')
+      .eq('id', userId)
+      .maybeSingle();
+  
+    if (error) return { data: null, error };
+    if (!data) return { data: null, error: null };
+  
+    return { data: toCamel(data) as User, error: null };
+  }
 }

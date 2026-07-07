@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastService } from '../../../core/services/toast-service';
+import { UserProfileService } from '../../../core/services/user-profile.service';
 
 @Component({
   selector: 'app-loginpage',
@@ -19,6 +20,7 @@ export class Loginpage {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly toast = inject(ToastService)
+  private readonly userProfileService = inject(UserProfileService);
  
   readonly currentYear = new Date().getFullYear();
   readonly isLoading = signal(false);
@@ -58,8 +60,7 @@ export class Loginpage {
       return;
     }
  
-    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/dashboard/orders';
-    await this.router.navigateByUrl(returnUrl);
+    await this.navigateAfterLogin();
   }
  
   async onGoogleSignIn(): Promise<void> {
@@ -70,6 +71,26 @@ export class Loginpage {
       this.errorMessage.set(error);
       this.isLoading.set(false);
     }
-    // Pas de navigation ici — Supabase redirige via OAuth
+    // Navigation gérée par OAuthCallbackpage après redirection Supabase
+  }
+ 
+  private async navigateAfterLogin(): Promise<void> {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+ 
+    if (returnUrl) {
+      await this.router.navigateByUrl(returnUrl);
+      this.isLoading.set(false);
+      return;
+    }
+ 
+    try {
+      const profile = await this.userProfileService.fetchOnce();
+      const destination = profile.role === 'admin' ? '/admin' : '/dashboard/orders';
+      await this.router.navigateByUrl(destination);
+    } catch {
+      await this.router.navigateByUrl('/dashboard/orders');
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 }
