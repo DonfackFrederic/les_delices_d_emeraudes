@@ -13,6 +13,9 @@ function escapeHtml(value: string): string {
     .replace(/'/g, '&#39;');
 }
 
+// TODO : remplacer le logo par une URL dynamique (configurable dans l'admin) pour que l'email reflète le branding du site.
+const logoUrl = 'https://votre-domaine.com/assets/logo-email.png';
+
 function formatPrice(amount: number): string {
   return `${amount.toFixed(2)} $`;
 }
@@ -49,7 +52,12 @@ export function buildOrderConfirmationTemplate(order: Order): string {
   return `
     <div style="font-family:'Inter',system-ui,sans-serif;max-width:560px;margin:0 auto;color:#333;">
       <div style="text-align:center;padding:32px 0 24px;">
-        <div style="font-size:2.5rem;">🍰</div>
+        <img
+          src="${logoUrl}"
+          alt="Logo Les Délices d'Émeraudes"
+          width="120"
+          style="display:block;margin:0 auto 16px;max-width:160px;height:auto;"
+        />
         <h1 style="font-family:Georgia,serif;font-size:1.5rem;color:#004D40;margin:12px 0 0;">
           Merci pour votre commande !
         </h1>
@@ -93,7 +101,7 @@ export function buildOrderConfirmationTemplate(order: Order): string {
 
       <hr style="border:none;border-top:1px solid #eee;margin:32px 0 16px;">
       <p style="color:#999;font-size:0.75em;text-align:center;">
-        La Pâtisserie — Merci de votre confiance 💛
+        LES DELICES D EMERAUDES — Merci de votre confiance 💛
       </p>
     </div>
   `;

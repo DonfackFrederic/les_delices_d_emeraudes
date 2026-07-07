@@ -76,7 +76,7 @@ export function buildStatusUpdateTemplate(order: Order, status: OrderStatus): st
 
       <hr style="border:none;border-top:1px solid #eee;margin:32px 0 16px;">
       <p style="color:#999;font-size:0.75em;text-align:center;">
-        La Pâtisserie — Merci de votre confiance 💛
+        LES DELICES D EMERAUDES — Merci de votre confiance 💛
       </p>
     </div>
   `;
