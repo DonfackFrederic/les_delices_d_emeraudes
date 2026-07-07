@@ -36,8 +36,6 @@ export class OAuthCallbackpage {
         // AuthRedirectService partagé plutôt que de dupliquer.
         try {
           const destination = this.userProfileService.isAdmin() ? '/admin' : '/dashboard/orders';
-          console.log('OAuthCallbackpage : redirection vers', destination);
-          console.log('OAuthCallbackpage : userProfileService.isAdmin() =', this.userProfileService.isAdmin());
           this.router.navigate([destination]);
         } catch {
           this.router.navigate(['/dashboard/orders']);
