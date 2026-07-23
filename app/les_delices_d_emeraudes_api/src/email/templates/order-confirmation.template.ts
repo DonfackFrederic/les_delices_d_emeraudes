@@ -14,7 +14,7 @@ function escapeHtml(value: string): string {
 }
 
 // TODO : remplacer le logo par une URL dynamique (configurable dans l'admin) pour que l'email reflète le branding du site.
-const logoUrl = 'https://votre-domaine.com/assets/logo-email.png';
+const logoUrl = 'https://pngbnwosvtahlthxtezd.supabase.co/storage/v1/object/public/images/logo.png';
 
 function formatPrice(amount: number): string {
   return `${amount.toFixed(2)} $`;
