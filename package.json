@@ -1,5 +1,5 @@
 {
-  "name": "les-delices-d-emeraudes",
+  "name": "les-delices-d-emeraude",
   "private": true,
   "workspaces": [
     "app/*",
@@ -7,7 +7,17 @@
   ],
   "scripts": {
     "build:shared": "npm run build --workspace=@shared/types",
-    "build:web": "npm run build:shared && npm run build --workspace=les-delices-d-emeraude-web",
-    "build:api": "npm run build:shared && npm run build --workspace=les_delices_d_emeraudes_api"
+
+    "start:web": "npm run start --workspace=les_delices_d_emeraude_web",
+    "start:web:dev": "npm run start:dev --workspace=les_delices_d_emeraude_web",
+    "start:web:staging": "npm run start:staging --workspace=les_delices_d_emeraude_web",
+    "start:web:prod": "npm run start:prod --workspace=les_delices_d_emeraude_web",
+
+    "build:web": "npm run build:shared && npm run build --workspace=les_delices_d_emeraude_web",
+    "build:web:dev": "npm run build:shared && npm run build:dev --workspace=les_delices_d_emeraude_web",
+    "build:web:staging": "npm run build:shared && npm run build:staging --workspace=les_delices_d_emeraude_web",
+    "build:web:prod": "npm run build:shared && npm run build:prod --workspace=les_delices_d_emeraude_web",
+
+    "build:api": "npm run build:shared && npm run build --workspace=les_delices_d_emeraude_api"
   }
 }
