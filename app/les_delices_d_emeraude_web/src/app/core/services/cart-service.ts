@@ -1,15 +1,8 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { Product, SelectedOption } from '@shared/types';
+import { CartItem, Product, SelectedOption } from '@shared/types';
 import { ToastService } from './toast-service';
 import { Router } from '@angular/router';
 
-export interface CartItem {
-  product: Product;
-  quantity: number;
-  selectedOptions: SelectedOption[];
-  comment: string;
-  lineTotal: number;
-}
  
 @Injectable({ providedIn: 'root' })
 @Injectable({ providedIn: 'root' })

@@ -55,10 +55,7 @@
     <div class="header-actions">
 
       <!-- Panier -->
-      <button class="cart-btn" aria-label="Panier (0 article)">
-        <span class="cart-icon" aria-hidden="true">🛒</span>
-        <span class="cart-text">Panier (0)</span>
-      </button>
+      <app-cart-icon />
 
       <!-- Non connecté : boutons Connexion + Inscription -->
       @if (!isAuthenticated()) {

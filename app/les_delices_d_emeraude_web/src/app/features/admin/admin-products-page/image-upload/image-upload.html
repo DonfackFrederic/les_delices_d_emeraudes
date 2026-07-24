@@ -1,0 +1,45 @@
+<div class="image-upload">
+  <label class="field-label">{{ label() }}</label>
+
+  <div class="image-upload__row">
+    <input
+      type="text"
+      class="field-input"
+      placeholder="https://... ou uploadez un fichier"
+      [value]="value()"
+      (input)="onUrlInput($event)"
+    />
+    <label class="btn-upload">
+      @if (isUploading()) {
+        <span class="spinner" aria-hidden="true"></span>
+      } @else {
+        📎
+      }
+      <input
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        class="sr-only-input"
+        (change)="onFileSelected($event)"
+        [disabled]="isUploading()"
+      />
+    </label>
+  </div>
+
+  @if (error()) {
+    <p class="field-error">{{ error() }}</p>
+  }
+
+  @if (value()) {
+    <div class="image-preview">
+      <img [src]="value()" [alt]="label()" />
+      <button
+        type="button"
+        class="image-preview__remove"
+        (click)="value.set('')"
+        aria-label="Retirer l'image"
+      >
+        ✕
+      </button>
+    </div>
+  }
+</div>

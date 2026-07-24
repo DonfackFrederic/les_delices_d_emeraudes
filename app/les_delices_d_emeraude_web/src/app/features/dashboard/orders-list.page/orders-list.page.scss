@@ -1,0 +1,222 @@
+.page {
+  max-width: 860px;
+}
+
+.page__title {
+  font-family: var(--font-serif);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--dark-color);
+  margin: 0 0 28px;
+}
+
+/* ── États ── */
+
+.page__loading, .page__error, .page__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 64px 0;
+  text-align: center;
+  color: var(--light-text);
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e5e7eb;
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty__icon { font-size: 3rem; }
+
+.page__empty h2 {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  color: var(--dark-color);
+  margin: 0;
+}
+
+.page__empty p { margin: 0; }
+
+/* ── Tableau desktop ── */
+
+.orders-table-wrapper {
+  background: white;
+  border-radius: 12px;
+  border: 1.5px solid #e5e7eb;
+  overflow: hidden;
+
+  @media (max-width: 640px) { display: none; }
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+
+  thead {
+    background: #f9fafb;
+    border-bottom: 1.5px solid #e5e7eb;
+  }
+
+  th {
+    padding: 12px 20px;
+    text-align: left;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--light-text);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 16px 20px;
+    color: var(--text-color);
+    vertical-align: middle;
+  }
+}
+
+.orders-table__row {
+  border-top: 1px solid #f3f4f6;
+  transition: background 0.15s;
+
+  &:hover { background: #fafafa; }
+}
+
+.orders-table__id {
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: var(--light-text);
+}
+
+.orders-table__total {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+/* ── Cards mobile ── */
+
+.orders-cards {
+  display: none;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-direction: column;
+  gap: 12px;
+
+  @media (max-width: 640px) { display: flex; }
+}
+
+.order-card {
+  background: white;
+  border-radius: 12px;
+  border: 1.5px solid #e5e7eb;
+  padding: 16px;
+}
+
+.order-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.order-card__id {
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: var(--light-text);
+}
+
+.order-card__body {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.order-card__date { font-size: 0.85rem; color: var(--light-text); margin: 0; }
+
+.order-card__total {
+  font-weight: 700;
+  color: var(--primary-color);
+  margin: 0;
+}
+
+.order-card__link {
+  font-size: 0.85rem;
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* ── Badges statut ── */
+
+.status-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.badge--pending   { background: #f3f4f6; color: #6b7280; }
+.badge--confirmed { background: #dbeafe; color: #1d4ed8; }
+.badge--preparing { background: #ffedd5; color: #c2410c; }
+.badge--ready     { background: #d1fae5; color: #059669; }
+.badge--delivered { background: #064e3b; color: #a7f3d0; }
+.badge--cancelled { background: #fee2e2; color: #b91c1c; }
+
+/* ── Boutons ── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s;
+
+  &--primary {
+    background: var(--primary-color);
+    color: white;
+    padding: 11px 22px;
+    font-size: 0.9rem;
+    &:hover { background: #00695c; }
+  }
+
+  &--secondary {
+    background: white;
+    color: var(--primary-color);
+    border: 1.5px solid var(--primary-color);
+    padding: 9px 20px;
+    font-size: 0.9rem;
+    &:hover { background: rgba(var(--primary-rgb), 0.05); }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: var(--primary-color);
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    &:hover { background: rgba(var(--primary-rgb), 0.08); }
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+}

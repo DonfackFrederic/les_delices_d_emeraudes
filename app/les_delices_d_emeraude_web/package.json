@@ -1,12 +1,23 @@
 {
-  "name": "les-delices-d-emeraude-web",
+  "name": "les_delices_d_emeraude_web",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+
     "start": "ng serve",
+    "start:dev": "ng serve --configuration development",
+    "start:staging": "ng serve --configuration staging",
+    "start:prod": "ng serve --configuration production",
+
     "prebuild": "cd ../../packages/shared-types && npm run build",
+
     "build": "ng build",
+    "build:dev": "ng build --configuration development",
+    "build:staging": "ng build --configuration staging",
+    "build:prod": "ng build --configuration production",
+
     "watch": "ng build --watch --configuration development",
+
     "test": "ng test"
   },
   "private": true,

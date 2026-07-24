@@ -1,0 +1,139 @@
+<div class="modal-backdrop" (click)="closed.emit()">
+  <div
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="isEditMode() ? 'Modifier la catégorie' : 'Nouvelle catégorie'"
+    (click)="$event.stopPropagation()"
+  >
+    <header class="modal__header">
+      <h2 class="modal__title">
+        {{ isEditMode() ? 'Modifier la catégorie' : 'Nouvelle catégorie' }}
+      </h2>
+      <button
+        class="modal__close"
+        (click)="closed.emit()"
+        type="button"
+        aria-label="Fermer"
+      >
+        ✕
+      </button>
+    </header>
+
+    <form class="modal__form" (ngSubmit)="save()" #form="ngForm">
+      <div class="form-field">
+        <label for="name" class="field-label">
+          Nom <span class="field-required">*</span>
+        </label>
+        <input
+          id="name"
+          type="text"
+          class="field-input"
+          name="name"
+          required
+          minlength="2"
+          maxlength="100"
+          [(ngModel)]="name"
+          (ngModelChange)="onNameChange($event)"
+          placeholder="Pâtisserie fine"
+        />
+      </div>
+
+      <div class="form-field">
+        <label for="slug" class="field-label">
+          Slug <span class="field-required">*</span>
+        </label>
+        <input
+          id="slug"
+          type="text"
+          class="field-input"
+          name="slug"
+          required
+          pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          [(ngModel)]="slug"
+          placeholder="patisserie-fine"
+        />
+        <p class="field-hint">Généré automatiquement, modifiable si besoin.</p>
+      </div>
+
+      <div class="form-field">
+        <label for="description" class="field-label">Description</label>
+        <textarea
+          id="description"
+          class="field-input field-textarea"
+          name="description"
+          maxlength="500"
+          rows="3"
+          [(ngModel)]="description"
+        ></textarea>
+      </div>
+
+      <div class="form-field">
+        <label class="field-label">Image</label>
+
+        <div class="image-input-group">
+          <input
+            type="text"
+            class="field-input"
+            name="imageUrl"
+            placeholder="https://... ou uploadez un fichier"
+            [(ngModel)]="imageUrl"
+          />
+          <label class="btn btn--upload">
+            @if (isUploading()) {
+              <span class="btn__spinner" aria-hidden="true"></span>
+            } @else {
+              📎
+            }
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              class="sr-only-input"
+              (change)="onFileSelected($event)"
+              [disabled]="isUploading()"
+            />
+          </label>
+        </div>
+
+        @if (uploadError()) {
+          <p class="field-error">{{ uploadError() }}</p>
+        }
+
+        @if (imageUrl()) {
+          <img [src]="imageUrl()" alt="Aperçu" class="image-preview" />
+        }
+      </div>
+
+      <label class="checkbox-field">
+        <input type="checkbox" name="isActive" [(ngModel)]="isActive" />
+        Catégorie active
+      </label>
+
+      @if (saveError()) {
+        <div class="form-error" role="alert">{{ saveError() }}</div>
+      }
+
+      <footer class="modal__footer">
+        <button
+          type="button"
+          class="btn btn--secondary"
+          (click)="closed.emit()"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          class="btn btn--primary"
+          [disabled]="form.invalid || isSaving()"
+        >
+          @if (isSaving()) {
+            <span class="btn__spinner" aria-hidden="true"></span>
+            Sauvegarde…
+          } @else {
+            {{ isEditMode() ? 'Enregistrer' : 'Créer' }}
+          }
+        </button>
+      </footer>
+    </form>
+  </div>
+</div>

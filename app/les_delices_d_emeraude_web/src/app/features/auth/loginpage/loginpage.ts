@@ -1,11 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ToastService } from '../../../core/services/toast-service';
+import { UserProfileService } from '../../../core/services/user-profile.service';
 
 @Component({
   selector: 'app-loginpage',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './loginpage.html',
   styleUrls: [
     "../styles/_auth-shared.scss",
@@ -17,6 +19,8 @@ export class Loginpage {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly toast = inject(ToastService)
+  private readonly userProfileService = inject(UserProfileService);
  
   readonly currentYear = new Date().getFullYear();
   readonly isLoading = signal(false);
@@ -27,6 +31,13 @@ export class Loginpage {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
   });
+
+  constructor(){
+    const expired = this.route.snapshot.queryParamMap.get('sessionExpired');
+    if (expired) {
+      this.toast.info('Session expiré', 'Votre session a expiré. Veuillez vous reconnecter.');
+    }
+  }
  
   isFieldInvalid(field: 'email' | 'password'): boolean {
     const ctrl = this.form.get(field)!;
@@ -49,8 +60,7 @@ export class Loginpage {
       return;
     }
  
-    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/dashboard/orders';
-    await this.router.navigateByUrl(returnUrl);
+    await this.navigateAfterLogin();
   }
  
   async onGoogleSignIn(): Promise<void> {
@@ -61,6 +71,26 @@ export class Loginpage {
       this.errorMessage.set(error);
       this.isLoading.set(false);
     }
-    // Pas de navigation ici — Supabase redirige via OAuth
+    // Navigation gérée par OAuthCallbackpage après redirection Supabase
+  }
+ 
+  private async navigateAfterLogin(): Promise<void> {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+ 
+    if (returnUrl) {
+      await this.router.navigateByUrl(returnUrl);
+      this.isLoading.set(false);
+      return;
+    }
+ 
+    try {
+      const profile = await this.userProfileService.fetchOnce();
+      const destination = profile.role === 'admin' ? '/admin' : '/dashboard/orders';
+      await this.router.navigateByUrl(destination);
+    } catch {
+      await this.router.navigateByUrl('/dashboard/orders');
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 }

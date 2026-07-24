@@ -1,0 +1,101 @@
+<div class="page">
+  <h1 class="page__title">Mes commandes</h1>
+
+  @if (ordersResource.isLoading()) {
+    <div class="page__loading" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Chargement de vos commandes…</p>
+    </div>
+  } @else if (ordersResource.error()) {
+    <div class="page__error" role="alert">
+      <p>Impossible de charger vos commandes. Veuillez réessayer.</p>
+      <button class="btn btn--secondary" (click)="ordersResource.reload()">
+        Réessayer
+      </button>
+    </div>
+  } @else if (orders()?.length === 0) {
+    <div class="page__empty">
+      <div class="empty__icon" aria-hidden="true">🛍️</div>
+      <h2>Aucune commande pour l'instant</h2>
+      <p>Vos commandes apparaîtront ici après votre premier achat.</p>
+      <a routerLink="/products" class="btn btn--primary">Voir la boutique</a>
+    </div>
+  } @else {
+    <!-- Desktop : tableau -->
+    <div class="orders-table-wrapper" role="region" aria-label="Liste de vos commandes">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th scope="col">Commande</th>
+            <th scope="col">Date</th>
+            <th scope="col">Statut</th>
+            <th scope="col">Total</th>
+            <th scope="col"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of orders(); track order.id) {
+            <tr class="orders-table__row">
+              <td class="orders-table__id">
+                #{{ order.id.slice(0, 8).toUpperCase() }}
+              </td>
+              <td>
+                {{ order.createdAt | date: 'd MMM yyyy' }}
+              </td>
+              <td>
+                <span
+                  class="status-badge"
+                  [class]="'status-badge ' + statusConfig(order.status).class"
+                >
+                  {{ statusConfig(order.status).label }}
+                </span>
+              </td>
+              <td class="orders-table__total">
+                {{ order.totalPrice | currency: 'CAD' : 'symbol-narrow' : '1.2-2' }}
+              </td>
+              <td>
+                <a
+                  [routerLink]="['/dashboard/orders', order.id]"
+                  class="btn btn--ghost"
+                >
+                  Voir le détail
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Mobile : cards -->
+    <ul class="orders-cards" role="list">
+      @for (order of orders(); track order.id) {
+        <li class="order-card">
+          <div class="order-card__header">
+            <span class="order-card__id">#{{ order.id.slice(0, 8).toUpperCase() }}</span>
+            <span
+              class="status-badge"
+              [class]="'status-badge ' + statusConfig(order.status).class"
+            >
+              {{ statusConfig(order.status).label }}
+            </span>
+          </div>
+          <div class="order-card__body">
+            <p class="order-card__date">
+              {{ order.createdAt | date: 'd MMMM yyyy' }}
+            </p>
+            <p class="order-card__total">
+              {{ order.totalPrice | currency: 'CAD' : 'symbol-narrow' : '1.2-2' }}
+            </p>
+          </div>
+          <a
+            [routerLink]="['/dashboard/orders', order.id]"
+            class="order-card__link"
+          >
+            Voir le détail →
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</div>

@@ -1,0 +1,120 @@
+<div class="admin">
+  <!-- ── Sidebar desktop ─────────────────────────────────────────────── -->
+  <aside class="admin__sidebar" aria-label="Navigation admin">
+    <div class="sidebar__brand">
+      <a routerLink="/home" class="sidebar__logo">
+        <img src="logo.png" alt="Les Délices d'Émeraude">
+        <span>Admin</span>
+      </a>
+    </div>
+
+    <nav class="sidebar__nav">
+      @for (item of navItems; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="sidebar__link--active"
+          [routerLinkActiveOptions]="{ exact: item.path === '/admin' }"
+          class="sidebar__link"
+        >
+          <span class="sidebar__icon" aria-hidden="true" [innerHTML]="getIcon(item.icon)"></span>
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar__footer">
+      <a routerLink="/dashboard/orders" class="sidebar__link sidebar__link--muted">
+        ← Retour espace client
+      </a>
+      <button class="sidebar__signout" (click)="signOut()" type="button">
+        Déconnexion
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── Zone principale ─────────────────────────────────────────────── -->
+  <main class="admin__main">
+    <!-- Header mobile : logo + menu hamburger -->
+    <header class="admin__mobile-header">
+      <a routerLink="/home" class="mobile-header__logo sidebar__logo">
+        <img src="logo.png" alt="Les Délices d'Émeraude">
+        <span>Admin</span>
+      </a>
+      <button
+        class="mobile-header__menu-btn"
+        (click)="toggleMobileMenu()"
+        [attr.aria-expanded]="isMobileMenuOpen()"
+        aria-label="Ouvrir le menu de navigation"
+        type="button"
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          @if (isMobileMenuOpen()) {
+            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          } @else {
+            <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          }
+        </svg>
+      </button>
+    </header>
+
+    <!-- Menu hamburger déroulant mobile -->
+    @if (isMobileMenuOpen()) {
+      <nav class="mobile-menu" aria-label="Navigation admin mobile">
+        @for (item of navItems; track item.path) {
+          <a
+            [routerLink]="item.path"
+            routerLinkActive="mobile-menu__link--active"
+            [routerLinkActiveOptions]="{ exact: item.path === '/admin' }"
+            class="mobile-menu__link"
+            (click)="closeMobileMenu()"
+          >
+            <span aria-hidden="true" [innerHTML]="getIcon(item.icon)"></span>
+            {{ item.label }}
+          </a>
+        }
+        <a
+          routerLink="/dashboard/orders"
+          class="mobile-menu__link mobile-menu__link--muted"
+          (click)="closeMobileMenu()"
+        >
+          ← Retour espace client
+        </a>
+        <button class="mobile-menu__signout" (click)="signOut()" type="button">
+          Déconnexion
+        </button>
+      </nav>
+    }
+
+    <header class="admin__header">
+      <nav aria-label="Fil d'Ariane" class="breadcrumb">
+        @for (crumb of breadcrumb(); track crumb; let last = $last) {
+          <span class="breadcrumb__item" [class.breadcrumb__item--current]="last">
+            {{ crumb }}
+          </span>
+          @if (!last) {
+            <span class="breadcrumb__sep" aria-hidden="true">/</span>
+          }
+        }
+      </nav>
+    </header>
+
+    <div class="admin__content">
+      <router-outlet />
+    </div>
+
+    <!-- Bottom-nav mobile (raccourcis principaux) -->
+    <nav class="bottom-nav" aria-label="Navigation rapide mobile">
+      @for (item of navItems; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="bottom-nav__link--active"
+          [routerLinkActiveOptions]="{ exact: item.path === '/admin' }"
+          class="bottom-nav__link"
+        >
+          <span aria-hidden="true" [innerHTML]="getIcon(item.icon)"></span>
+          <span class="bottom-nav__label">{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+  </main>
+</div>

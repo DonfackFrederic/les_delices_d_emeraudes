@@ -1,0 +1,21 @@
+<div class="stripe-card-wrapper">
+  <label class="field-label">Informations de paiement</label>
+
+  <div
+    id="stripe-card-element"
+    class="stripe-card-element"
+    [class.stripe-card-element--error]="stripeService.cardError()"
+  ></div>
+
+  @if (stripeService.cardError()) {
+    <p class="field-error">{{ stripeService.cardError() }}</p>
+  }
+
+  <p class="stripe-notice">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z" stroke="currentColor" stroke-width="2"/>
+      <path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    Paiement sécurisé par Stripe. Vos données ne sont jamais transmises à nos serveurs.
+  </p>
+</div>

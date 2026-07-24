@@ -1,0 +1,179 @@
+.page {
+  max-width: 520px;
+}
+
+.page__title {
+  font-family: var(--font-serif);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--dark-color);
+  margin: 0 0 28px;
+}
+
+/* ── Card avatar ── */
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: white;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 28px;
+}
+
+.profile-card__avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+
+.profile-card__email {
+  font-size: 0.9rem;
+  color: var(--light-text);
+  margin: 0;
+}
+
+/* ── Formulaire ── */
+
+.form {
+  background: white;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.field-required { color: #c0392b; margin-left: 2px; }
+
+.field-optional {
+  font-weight: 400;
+  color: var(--light-text);
+  font-size: 0.8rem;
+  margin-left: 4px;
+}
+
+.field-input {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  color: var(--text-color);
+  background: white;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  padding: 11px 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+
+  &::placeholder { color: #aaa; }
+
+  &:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.12);
+  }
+
+  &--error {
+    border-color: #c0392b;
+    &:focus { box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12); }
+  }
+}
+
+.field-error {
+  font-size: 0.8rem;
+  color: #c0392b;
+  margin: 0;
+}
+
+.form__footer {
+  padding-top: 4px;
+}
+
+/* ── Bouton ── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 11px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &--primary {
+    background: var(--primary-color);
+    color: white;
+    &:hover:not(:disabled) { background: #00695c; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+  }
+}
+
+.btn__spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Toast ── */
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 16px;
+  animation: slideIn 0.25s ease;
+
+  &--success {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #6ee7b7;
+  }
+
+  &--error {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+  }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
